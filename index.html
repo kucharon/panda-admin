@@ -1,0 +1,2226 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440, initial-scale=1">
+<title>熊猫睡眠管理后台 · 内容配置管理（可交互原型）</title>
+<style>
+:root{
+  --sidebar:#34475a; --sidebar-deep:#2c3e50; --sidebar-active:#3aa9a4;
+  --accent:#0f9f9f; --accent-deep:#0e7f7f; --accent-soft:#e6f7f6;
+  --link:#1677ff; --bg:#eef1f5; --card:#fff; --border:#e5e9ef; --border-light:#f0f2f5;
+  --th:#ececf0; --text:#303844; --text2:#4a5563; --muted:#8a94a3; --muted2:#98a2b3;
+  --green:#3fba83; --red:#ff4d4f; --orange:#fa8c16; --blue:#1677ff;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit}
+a{color:var(--link);text-decoration:none;cursor:pointer}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:#ccd4de;border-radius:4px}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ---------- 顶栏 ---------- */
+.topbar{height:56px;background:#fff;border-bottom:1px solid #e8ebf0;display:flex;align-items:center;position:relative;z-index:30;flex:none}
+.brand{width:200px;flex:none;display:flex;align-items:center;gap:10px;padding-left:16px;font-size:14px;font-weight:600;color:#1f2d3d;letter-spacing:.2px}
+.brand-mark{width:30px;height:30px;border-radius:8px;background:#1e2b4a;display:flex;align-items:center;justify-content:center;flex:none}
+.crumb-wrap{display:flex;align-items:center;gap:14px}
+.hamburger{color:#5b6675;display:flex;align-items:center}
+.crumb{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.crumb b{color:#2b3441;font-weight:500}
+.crumb .sep{color:#c4ccd6}
+.top-right{margin-left:auto;padding-right:20px;display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--text2)}
+.avatar{width:28px;height:28px;border-radius:50%;background:#dff3f1;color:var(--accent-deep);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600}
+.caret{color:#98a2b3;font-size:10px}
+
+/* ---------- 布局 ---------- */
+.layout{display:flex;height:calc(100% - 56px);overflow:hidden}
+.sidebar{width:200px;flex:none;background:var(--sidebar);padding:10px 0 24px;overflow-y:auto;overflow-x:hidden}
+.sidebar::-webkit-scrollbar{width:6px}
+.sidebar::-webkit-scrollbar-thumb{background:#4a5d70}
+.menu-item{height:42px;display:flex;align-items:center;gap:10px;padding:0 14px;font-size:13px;color:#c7d1dc;position:relative;cursor:pointer;user-select:none;white-space:nowrap}
+.menu-item:hover{background:rgba(255,255,255,.04);color:#fff}
+.menu-item.open{color:#fff}
+.menu-item .m-ico{width:18px;height:18px;flex:none;display:flex;align-items:center;justify-content:center;color:currentColor}
+.menu-item .m-caret{margin-left:auto;font-size:10px;color:#9fb0c2;transition:transform .15s}
+.menu-item.open .m-caret{transform:rotate(180deg)}
+.menu-child.menu-parent{font-weight:500}
+.menu-child.menu-parent:hover{background:rgba(255,255,255,.05)}
+.menu-child.menu-parent .mc-arrow{margin-left:auto;margin-right:8px;font-size:10px;color:#9fb0c2;transition:transform .15s}
+.menu-child.menu-parent.open .mc-arrow{transform:rotate(180deg)}
+.menu-grandchild{height:34px;display:flex;align-items:center;gap:8px;padding:0 16px 0 58px;font-size:12px;color:#a9b8c8;cursor:pointer;white-space:nowrap;position:relative}
+.menu-grandchild:hover{color:#fff;background:rgba(255,255,255,.05)}
+.menu-grandchild.active{background:var(--sidebar-active);color:#fff;font-weight:600}
+.menu-grandchild.active::after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#79e0d6}
+.menu-grandchild .mc-dot{width:4px;height:4px;border-radius:50%;background:#7b8fa3;flex:none}
+.menu-grandchild.active .mc-dot{background:#79e0d6}
+.menu-subhead{padding:7px 12px 4px 44px;font-size:11px;font-weight:600;color:#7f8c9b;letter-spacing:.4px}
+.menu-child{height:38px;display:flex;align-items:center;gap:9px;padding:0 16px 0 40px;font-size:12.5px;color:#b4c1cf;cursor:pointer;white-space:nowrap;position:relative}
+.menu-child:hover{color:#fff;background:rgba(255,255,255,.05)}
+.menu-child.active{background:var(--sidebar-active);color:#fff;font-weight:600}
+.menu-child .mc-ico{width:16px;height:16px;display:flex;align-items:center;justify-content:center;opacity:.9;flex:none}
+.menu-child .mc-ico svg{width:16px;height:16px}
+.menu-child.active::after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#79e0d6}
+.main{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden}
+.tabbar{height:40px;background:#fff;border-bottom:1px solid #e8ebf0;display:flex;align-items:center;padding:0 16px;gap:8px;flex:none}
+.tab{height:27px;background:#f0f3f7;color:#4a5563;border-radius:3px;padding:0 10px;font-size:12px;display:inline-flex;align-items:center;gap:8px;cursor:pointer;white-space:nowrap}
+.tab.active{background:var(--green);color:#fff}
+.tab .x{opacity:.65;font-size:13px;line-height:1;padding:0 1px}
+.tab .x:hover{opacity:1}
+.content{flex:1;overflow:auto;padding:16px 20px 24px;position:relative}
+.page{max-width:1600px}
+
+/* ---------- 卡片/查询 ---------- */
+.card{background:var(--card);border-radius:4px;box-shadow:0 1px 2px rgba(16,30,54,.04);margin-bottom:14px;overflow:hidden}
+.card-head{display:flex;align-items:center;justify-content:space-between;padding:13px 20px;border-bottom:1px solid var(--border-light);gap:12px;flex-wrap:wrap}
+.card-title{font-size:14px;font-weight:600;color:#26303d;display:flex;align-items:center;gap:9px}
+.card-title .bar{width:3px;height:14px;background:var(--accent);border-radius:2px;display:inline-block;flex:none}
+.card-title .card-sub{font-size:11.5px;color:var(--muted2);font-weight:400}
+.card-body{padding:16px 20px}
+.card-foot-note{font-size:11.5px;color:var(--muted2);padding:0 20px 14px;line-height:1.6}
+.query-card{background:#fff;border-radius:4px;box-shadow:0 1px 2px rgba(16,30,54,.04);padding:14px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.qf{flex:none}
+.qf input,.qf select{width:100%}
+.q-actions{margin-left:auto;display:flex;gap:10px}
+
+/* ---------- 按钮 ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:32px;padding:0 16px;border-radius:3px;border:1px solid #d9dfe7;background:#fff;color:var(--text2);font-size:12.5px;white-space:nowrap;transition:all .12s}
+.btn:hover{border-color:#b9c6d6;color:#26303d}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{background:var(--accent-deep);border-color:var(--accent-deep)}
+.btn.sm{height:28px;padding:0 10px;font-size:12px}
+.btn.link{border:none;background:transparent;color:var(--link);padding:0 4px;height:auto}
+.btn.danger{color:var(--red)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.ops{display:flex;align-items:center;gap:10px;white-space:nowrap}
+.ops a{font-size:12px}
+.ops a.danger{color:var(--red)}
+.ops a.muted{color:var(--muted)}
+
+/* ---------- 表单控件 ---------- */
+input[type=text],input[type=number],input[type=date],input[type=datetime-local],select,textarea{height:32px;border:1px solid #d9dfe7;border-radius:3px;background:#fff;padding:0 10px;font-size:12.5px;color:var(--text);outline:none;transition:border-color .12s,box-shadow .12s;width:100%}
+textarea{height:auto;padding:8px 10px;line-height:1.6;resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(15,159,159,.12)}
+input::placeholder,textarea::placeholder{color:#b8c0cb}
+input:disabled,select:disabled,textarea:disabled{background:#f5f6f8;color:#8a94a3;cursor:not-allowed}
+input[type=radio],input[type=checkbox]{width:14px;height:14px;accent-color:var(--accent);margin:0 6px 0 0;vertical-align:-2px;cursor:pointer}
+.radio-row{display:flex;align-items:center;gap:20px;min-height:32px;flex-wrap:wrap}
+.radio-row label{display:inline-flex;align-items:center;cursor:pointer;font-size:12.5px}
+.check-row{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.check-row label{display:inline-flex;align-items:center;cursor:pointer;font-size:12.5px}
+.check-row label.disabled{color:#b8c0cb;cursor:not-allowed}
+
+/* ---------- 表格 ---------- */
+.table-wrap{overflow-x:auto}
+table.grid{width:100%;border-collapse:collapse;table-layout:fixed}
+table.grid th{background:var(--th);color:#2b3441;font-size:12px;font-weight:600;text-align:left;padding:10px 8px;border-bottom:1px solid #e3e7ed;white-space:nowrap}
+table.grid td{padding:9px 8px;border-bottom:1px solid var(--border-light);font-size:12px;color:#3a4452;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+table.grid tbody tr:hover td{background:#f7fafc}
+table.grid tbody tr.selected td{background:#f0faf9}
+table.grid tbody tr.row-error td{background:#fff1f0}
+.col-center{text-align:center}
+.mono{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:11.5px}
+.pagination{display:flex;align-items:center;gap:10px;padding:12px 18px;font-size:12px;color:#5b6675}
+.pagination .pager{margin-left:auto;display:flex;align-items:center;gap:6px}
+.page-btn{min-width:28px;height:28px;padding:0 6px;border:1px solid #e1e6ee;border-radius:3px;background:#fff;color:#5b6675;font-size:12px;display:inline-flex;align-items:center;justify-content:center}
+.page-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.page-size{height:28px;width:96px;border:1px solid #e1e6ee;border-radius:3px;padding:0 6px;font-size:12px;color:#5b6675;background:#fff}
+.jump{display:flex;align-items:center;gap:6px}
+.jump input{width:46px;height:28px;text-align:center}
+
+/* ---------- 封面色块 / 标签 ---------- */
+.thumb{width:34px;height:34px;border-radius:4px;position:relative;overflow:hidden;flex:none;border:1px solid rgba(20,30,45,.06);background:#f2f4f7}
+.thumb img,.thumb video{width:100%;height:100%;object-fit:cover;display:block}
+.thumb .mini-badge{position:absolute;right:0;bottom:0;z-index:2;background:rgba(20,30,45,.62);color:#fff;font-size:9px;line-height:12px;padding:0 3px;border-radius:2px 0 0 0}
+.thumb.empty{display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--red);background:#fff1f0;border:1px dashed #ffb3b8;text-align:center;line-height:1.1}
+.thumb.broken{display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted);background:#f2f4f7;border:1px dashed #d5dee8;text-align:center;line-height:1.1}
+.cover-cell{display:flex;align-items:center;gap:8px}
+.tag{display:inline-flex;align-items:center;height:20px;padding:0 7px;border-radius:3px;font-size:11.5px;line-height:1;white-space:nowrap;border:1px solid transparent}
+.tag-green{background:#e9f8ef;color:#1a7f4b;border-color:#b7e4c9}
+.tag-teal{background:var(--accent-soft);color:var(--accent-deep);border-color:#b5e3e0}
+.tag-gray{background:#f2f4f7;color:#8a94a3;border-color:#e1e6ee}
+.tag-orange{background:#fff4e6;color:#d46b08;border-color:#ffd8a8}
+.tag-red{background:#fff1f0;color:#cf1322;border-color:#ffccc7}
+.tag-blue{background:#eef4ff;color:#1d5bd6;border-color:#c6d8ff}
+.tag-plus{display:inline-flex;align-items:center;height:18px;padding:0 5px;margin-left:4px;border-radius:3px;background:#f2f4f7;color:#5b6675;font-size:10.5px;border:1px solid #e5e9ef}
+.status-on{color:var(--blue)}
+.status-off{color:var(--red)}
+.rank{display:inline-flex;align-items:center;justify-content:center;min-width:46px;height:20px;padding:0 7px;border-radius:10px;font-size:11px;font-weight:700;letter-spacing:.2px}
+.rank.top1{background:#f3e3b8;color:#8a6116}
+.rank.top2{background:#dbe2fb;color:#3b4f9e}
+.rank.top3{background:#f8dfd3;color:#9e4b2a}
+.rank.topn{background:#39405e;color:#fff}
+.eff{display:inline-flex;align-items:center;height:20px;padding:0 7px;border-radius:3px;font-size:11px}
+.eff-on{background:#e9f8ef;color:#1a7f4b}
+.eff-wait{background:#fff4e6;color:#d46b08}
+.eff-end{background:#f2f4f7;color:#8a94a3}
+.eff-off{background:#fff1f0;color:#cf1322}
+
+/* ---------- 弹窗 ---------- */
+.modal-overlay{position:fixed;inset:0;background:rgba(15,26,42,.45);z-index:80;display:flex;align-items:flex-start;justify-content:center;padding:40px 20px;overflow:auto;animation:fadeIn .15s ease}
+.modal-overlay.hidden{display:none}
+.modal{background:#fff;border-radius:6px;box-shadow:0 16px 48px rgba(15,26,42,.24);width:760px;max-width:100%;display:flex;flex-direction:column;max-height:calc(100vh - 80px);animation:slideUp .18s ease}
+.modal.wide{width:1000px}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:15px 22px;border-bottom:1px solid var(--border-light);flex:none;background:#fff;border-radius:6px 6px 0 0}
+.modal-title{font-size:15px;font-weight:600;color:#26303d;display:flex;align-items:center;gap:10px}
+.modal-close{width:26px;height:26px;border:none;background:transparent;color:#98a2b3;font-size:18px;border-radius:3px;line-height:1}
+.modal-close:hover{background:#f2f4f7;color:#4a5563}
+.modal-body{padding:6px 24px 18px;overflow-y:auto}
+.modal-foot{display:flex;justify-content:flex-end;gap:10px;padding:12px 22px;border-top:1px solid var(--border-light);background:#fcfdfe;flex:none;border-radius:0 0 6px 6px}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* ---------- 表单分区 ---------- */
+.branch-tip{display:flex;gap:8px;align-items:flex-start;margin:0 22px 14px;padding:9px 12px;border-radius:8px;background:#eef7f6;border:1px solid #cfe8e5;color:#1f7a70;font-size:12px;line-height:1.55}
+.branch-tip b{color:#0f6b62;font-weight:600;white-space:nowrap}
+.form-section{padding:16px 0 6px;border-bottom:1px dashed #e8edf3}
+.form-section:last-child{border-bottom:none;padding-bottom:2px}
+.section-head{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:#26303d;margin-bottom:14px}
+.section-head .sec-bar{width:3px;height:14px;background:var(--accent);border-radius:2px}
+.section-head .sec-tip{font-size:11.5px;color:var(--muted2);font-weight:400}
+.fgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 30px}
+.fgrid.single-col{grid-template-columns:minmax(0,1fr)}
+.fitem{min-width:0}
+.fitem.full{grid-column:1/-1}
+.fitem .label{font-size:12.5px;color:var(--text2);margin-bottom:5px;display:flex;align-items:center;gap:4px}
+.fitem .label .req{color:var(--red)}
+.hint{font-size:11.5px;color:var(--muted2);margin-top:5px;line-height:1.55}
+.err-msg{display:none;font-size:11.5px;color:var(--red);margin-top:4px}
+.has-error .err-msg{display:block}
+.has-error input,.has-error select,.has-error textarea,.has-error .up-box{border-color:var(--red)!important}
+.counter{font-size:11px;color:var(--muted2);text-align:right;margin-top:3px}
+.upload-box{display:flex;gap:14px;align-items:flex-start;padding:12px;border:1px dashed #d5dee8;border-radius:6px;background:#fafcfe}
+.up-preview{width:104px;height:104px;border-radius:6px;border:1px solid #e1e6ee;background:#f2f6fa;display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none;position:relative;color:#b8c0cb;font-size:11.5px;text-align:center;line-height:1.4}
+.up-preview.tall{width:104px;height:132px}
+.up-preview.ratio54{width:140px;height:112px}
+.up-preview.phonebg{width:160px;height:107px}
+.up-preview.cover34{width:96px;height:128px}
+.cover-duo{display:flex;gap:4px;align-items:center}
+.thumb.thumb34{width:28px;height:37px}
+.thumb.thumb54{width:44px;height:35px}
+.th-sub{display:block;font-size:9.5px;color:#8a94a3;font-weight:400;line-height:1.25;margin-top:1px}
+.up-preview img,.up-preview video{width:100%;height:100%;object-fit:cover;display:block}
+.up-preview .up-badge{position:absolute;left:0;right:0;bottom:0;background:rgba(16,26,42,.55);color:#fff;font-size:10px;padding:2px 4px;text-align:center;z-index:2}
+.up-meta{flex:1;min-width:0;font-size:12px;color:var(--muted2);line-height:1.6}
+.up-meta .up-actions{display:flex;gap:8px;margin-top:8px}
+.up-meta .up-name{color:var(--text2);margin-top:6px;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini-table{width:100%;border-collapse:collapse;margin-top:6px}
+.mini-table th{background:#f5f7fa;font-size:11.5px;color:#5b6675;font-weight:600;text-align:left;padding:6px 8px;border:1px solid #eaeef4}
+.mini-table td{padding:5px 8px;border:1px solid #eaeef4;font-size:12px}
+.icon-btn{width:24px;height:24px;border:1px solid #e1e6ee;border-radius:3px;background:#fff;color:#5b6675;display:inline-flex;align-items:center;justify-content:center;font-size:11px;margin-right:4px}
+.icon-btn:hover{border-color:var(--accent);color:var(--accent-deep)}
+.icon-btn[disabled]{color:#c9d1db;cursor:not-allowed}
+.empty-tip{padding:18px;text-align:center;color:var(--muted2);font-size:12px;background:#fafcfe;border:1px dashed #d5dee8;border-radius:6px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:7px;background:#f2f6f8;border:1px solid #dfe6ec;border-radius:3px;padding:3px 8px;font-size:12px;color:#3a4756}
+.chip .x{color:#98a2b3;font-size:11px;cursor:pointer}
+.chip .x:hover{color:var(--red)}
+
+/* ---------- 榜单 ---------- */
+.rank-layout{display:flex;gap:16px;align-items:flex-start}
+.rank-main{flex:1;min-width:0}
+.rank-side{width:392px;flex:none;position:sticky;top:0}
+.rank-table td{padding:8px}
+.rank-table .rank-id-input{width:120px}
+.rank-table .rank-subtitle-input{width:190px}
+.rank-row-error td{background:#fff8f8!important}
+.rank-err{color:var(--red);font-size:11px;margin-top:3px;display:block}
+.rank-content{display:flex;align-items:center;gap:8px;min-height:34px}
+.rank-content .nm{font-size:12px;color:#2b3441;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rank-content .ty{font-size:10.5px;color:var(--muted2)}
+.rank-empty{color:#c4ccd6;font-size:11.5px}
+.preview-card{background:#fff;border-radius:4px;box-shadow:0 1px 2px rgba(16,30,54,.04);overflow:hidden}
+.preview-card .pc-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border-light)}
+.pc-title{font-size:13.5px;font-weight:600;color:#26303d;display:flex;align-items:center;gap:8px}
+.pc-title .bar{width:3px;height:13px;background:var(--accent);border-radius:2px}
+.rp-tabs{display:flex;gap:6px;padding:10px 12px 0;border-bottom:1px solid var(--border-light)}
+.rp-tab{padding:6px 14px;font-size:12px;color:#5b6675;border-radius:3px 3px 0 0;cursor:pointer;border-bottom:2px solid transparent}
+.rp-tab.active{color:var(--accent-deep);border-bottom-color:var(--accent);font-weight:600;background:var(--accent-soft)}
+.rp-body{padding:12px}
+.rp-page-label{font-size:11px;color:var(--muted2);margin-bottom:8px;display:flex;justify-content:space-between}
+.rp-item{display:flex;align-items:center;gap:10px;padding:8px 6px;border-radius:4px}
+.rp-item + .rp-item{border-top:1px dashed #eef1f5}
+.rp-item .rank{min-width:44px}
+.rp-item .info{flex:1;min-width:0}
+.rp-item .info .nm{font-size:12px;color:#26303d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rp-item .info .sub{font-size:11px;color:var(--muted2);margin-top:1px}
+.rp-item .play{width:22px;height:22px;border-radius:50%;border:1px solid #d9dfe7;color:#5b6675;display:flex;align-items:center;justify-content:center;font-size:9px;flex:none}
+.rp-dots{display:flex;gap:6px;justify-content:center;padding:10px 0 4px}
+.rp-dot{width:7px;height:7px;border-radius:50%;background:#d5dee8;cursor:pointer}
+.rp-dot.active{background:var(--accent)}
+.rp-placeholder{font-size:11.5px;color:var(--muted2);text-align:center;padding:14px 0}
+.rp-empty{color:#c4ccd6;font-size:11.5px;padding:6px}
+
+/* ---------- 搜索发现预览 ---------- */
+.search-preview{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:6px 0}
+.search-preview .sp-label{font-size:12px;color:var(--muted2);margin-right:4px}
+.sc-chip{display:inline-flex;align-items:center;gap:3px;background:#f5f7fa;border:1px solid #e3e9f0;border-radius:16px;padding:5px 14px;font-size:12.5px;color:#3a4756;cursor:pointer;transition:all .12s}
+.sc-chip:hover{border-color:var(--accent);color:var(--accent-deep);background:var(--accent-soft)}
+.sc-chip .sfx-hot{color:#ff4d4f;font-size:11px;letter-spacing:-1px}
+.sc-chip .sfx-new{color:#ff860e;font-style:italic;font-weight:700;font-size:11.5px}
+.sc-empty{font-size:12px;color:var(--muted2);padding:8px 0}
+
+/* ---------- 页面素材 / 手机预览 ---------- */
+.asset-layout{display:flex;gap:16px;align-items:flex-start}
+.asset-main{flex:1;min-width:0}
+.asset-side{width:360px;flex:none;position:sticky;top:0}
+.platform-tabs{display:flex;gap:6px;padding:10px 14px;border-bottom:1px solid var(--border-light);flex-wrap:wrap}
+.ptab{padding:4px 12px;border:1px solid #d9dfe7;border-radius:14px;font-size:11.5px;color:#5b6675;cursor:pointer;background:#fff}
+.ptab.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-deep);font-weight:600}
+.phone-wrap{display:flex;justify-content:center;padding:16px 14px 8px}
+.phone{width:268px;height:548px;border-radius:26px;background:#0e1830;position:relative;overflow:hidden;box-shadow:0 10px 30px rgba(15,26,42,.22);border:7px solid #1a2438;box-sizing:content-box}
+.phone .ph-screen{position:absolute;inset:0;overflow:hidden;background:#0e1830}
+.ph-bg{position:absolute;left:0;right:0;top:0;height:100%;background:linear-gradient(160deg,#0e1830,#23406b 55%,#5d7fa8)}
+.ph-bg.cover-top{height:46%}
+.ph-hero{position:absolute;left:0;right:0;top:0;aspect-ratio:3/2;height:auto;background:linear-gradient(160deg,#13284a,#3d6d8f 55%,#8fc5b0);}
+.ph-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,12,24,.05),rgba(6,12,24,.55))}
+.ph-content{position:absolute;left:0;right:0;top:0;bottom:0;padding:14px 14px 0;display:flex;flex-direction:column;color:#fff;z-index:3}
+.ph-status{display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,.85);margin-bottom:14px}
+.ph-title{font-size:17px;font-weight:700;letter-spacing:.5px;margin-top:6px}
+.ph-tabs{display:flex;gap:18px;margin-top:14px;font-size:12px}
+.ph-tab{padding-bottom:5px;color:rgba(255,255,255,.6);border-bottom:2px solid transparent}
+.ph-tab.active{color:#fff;border-bottom-color:#fff;font-weight:600}
+.ph-cards{margin-top:16px;display:flex;flex-direction:column;gap:10px}
+.ph-card{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:10px 12px;backdrop-filter:blur(4px)}
+.ph-card .k{font-size:10px;color:rgba(255,255,255,.62)}
+.ph-card .v{font-size:20px;font-weight:700;margin-top:2px}
+.ph-card .v small{font-size:11px;font-weight:400;color:rgba(255,255,255,.7);margin-left:4px}
+.ph-score{display:flex;align-items:center;gap:14px}
+.ph-ring{width:52px;height:52px;border-radius:50%;background:conic-gradient(#79e0d6 0 86%,rgba(255,255,255,.16) 86% 100%);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff}
+.ph-ring span{width:40px;height:40px;border-radius:50%;background:#14243d;display:flex;align-items:center;justify-content:center}
+.ph-bars{margin-top:12px;display:flex;gap:3px;height:44px;align-items:flex-end}
+.ph-bars i{flex:1;display:block;border-radius:2px 2px 0 0;background:rgba(255,255,255,.28)}
+.ph-bars i:nth-child(3n){background:rgba(121,224,214,.65)}
+.ph-overlay{position:absolute;left:0;right:0;bottom:0;height:46%;background:linear-gradient(180deg,rgba(10,18,32,0),#0b1424 55%)}
+.ph-caption{padding:0 16px 14px;font-size:11px;color:var(--muted2);text-align:center;line-height:1.6}
+.asset-code{display:flex;align-items:center;gap:9px}
+.asset-code b{font-size:12.5px;color:#2b3441}
+.asset-thumb-empty{display:flex;align-items:center;justify-content:center;color:#9aa6b5;font-size:11px}
+.preset-grid{display:flex;flex-wrap:wrap;gap:10px}
+.preset-item{width:104px;border:2px solid #e1e6ee;border-radius:6px;overflow:hidden;background:#fff;cursor:pointer;display:block;transition:border-color .12s;position:relative}
+.preset-item:hover{border-color:#b7d9d5}
+.preset-item.checked{border-color:var(--accent);box-shadow:0 0 0 2px rgba(38,166,154,.12)}
+.preset-item input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer;z-index:2}
+.preset-item img{width:100%;height:58px;object-fit:cover;display:block}
+.preset-item span{display:block;text-align:center;padding:4px 0;font-size:12px;color:#43505f}
+.preset-item.checked span{color:var(--accent-deep);font-weight:600}
+.asset-thumb{width:88px;height:59px;border-radius:5px;overflow:hidden;border:1px solid #e1e6ee;background:#f2f6fa;flex:none;position:relative}
+.asset-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* ---------- 占位页 ---------- */
+.placeholder{background:#fff;border-radius:4px;box-shadow:0 1px 2px rgba(16,30,54,.04);padding:70px 24px;text-align:center}
+.placeholder .ph-icon{width:56px;height:56px;border-radius:16px;background:var(--accent-soft);color:var(--accent-deep);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px}
+.placeholder h3{margin:0 0 6px;font-size:15px;color:#26303d}
+.placeholder p{margin:0;color:var(--muted2);font-size:12.5px}
+
+/* ---------- toast ---------- */
+.toast-wrap{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:200;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
+.toast{background:#fff;border-radius:4px;box-shadow:0 6px 24px rgba(15,26,42,.18);padding:10px 18px;font-size:12.5px;color:#303844;display:flex;align-items:center;gap:8px;border-left:3px solid var(--green);animation:toastIn .18s ease;max-width:560px}
+.toast.error{border-left-color:var(--red)}
+.toast.info{border-left-color:var(--blue)}
+.toast .t-ico{width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;background:var(--green);flex:none}
+.toast.error .t-ico{background:var(--red)}
+.toast.info .t-ico{background:var(--blue)}
+@keyframes toastIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.hidden{display:none!important}
+.nowrap{white-space:nowrap}
+.muted{color:var(--muted2)}
+.warn-text{color:var(--orange)}
+.sticky-bar{display:flex;justify-content:flex-end;gap:10px;padding:12px 20px;background:#fff;border-top:1px solid var(--border-light);position:sticky;bottom:0;z-index:5}
+.cell2{display:flex;flex-direction:column;line-height:1.35}
+.cell2 .sub{font-size:10.5px;color:#98a2b3}
+
+/* ---------- 音频标签 / 预览卡（task-5） ---------- */
+.tag-layout{display:flex;gap:24px;align-items:flex-start}
+.tag-layout .fgrid{flex:1;min-width:0}
+.audio-card-preview{width:200px;flex:none;border:1px solid #e5e9ef;border-radius:10px;padding:12px;background:#fff;box-shadow:0 2px 10px rgba(16,30,54,.06)}
+.acp-cover{width:176px;height:176px;border-radius:10px;overflow:hidden;background:#f2f6fa;display:flex;align-items:center;justify-content:center;color:#b8c0cb;font-size:12px;border:1px dashed #d5dee8}
+.acp-cover img,.acp-cover video{width:100%;height:100%;object-fit:cover;display:block}
+.acp-name{margin-top:10px;font-size:14px;font-weight:600;color:#26303d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.acp-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.acp-cap{font-size:11px;color:#98a2b3;margin-top:9px;line-height:1.5}
+.intro-tag-preview{width:288px;flex:none;border:1px dashed #d5dee8;border-radius:8px;background:#fafcfe;padding:14px}
+.itp-title{font-size:12.5px;font-weight:600;color:#26303d;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.itp-note{font-size:11px;color:#98a2b3;line-height:1.6;margin-top:10px}
+.tag-dark{background:#39405e;color:#fff;border-color:#39405e}
+.tag-group{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.series-wrap{overflow-x:auto}
+.series-table{width:100%;border-collapse:collapse;min-width:820px}
+.series-table th{background:#f5f7fa;font-size:11.5px;color:#5b6675;font-weight:600;text-align:left;padding:7px 8px;border:1px solid #eaeef4;white-space:nowrap}
+.series-table td{padding:6px;border:1px solid #eaeef4;vertical-align:middle}
+.series-table input,.series-table select{height:30px;font-size:12px}
+.series-table tr.row-error td{background:#fff8f8}
+.series-table tr.row-error input,.series-table tr.row-error select{border-color:#ffa39e}
+.series-err{color:#ff4d4f;font-size:11.5px;margin-top:6px;line-height:1.5;display:none}
+.series-err.show{display:block}
+.form-section.is-hidden{display:none}
+.noise-empty{background:#f7fbfa;border:1px dashed #cfe8e4;border-radius:8px;padding:26px 18px;text-align:center;color:#4a5563;font-size:13px}
+.series-cover-cell{display:flex;flex-wrap:wrap;align-items:center;gap:4px;min-width:70px}
+.series-cover-cell .thumb{width:26px;height:26px;border-radius:3px}
+.series-cover-cell .thumb.thumb54{width:30px;height:24px}
+.sc-empty{font-size:10px;color:#b8c0cb;line-height:1.2}
+.mini-link{font-size:11px;color:#0f9f9f;cursor:pointer;background:none;border:none;padding:0;font-family:inherit}
+
+/* ---------- 音频标签三步顺序（task-8） ---------- */
+.tag-steps{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.tag-step{background:#fff;border:1px solid #e5e9ef;border-radius:6px;padding:10px 12px}
+.tag-step.has-error{border-color:#ffa39e}
+.tag-step .step-label{font-size:12.5px;color:#26303d;font-weight:600;display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.tag-step .step-label .req{color:#ff4d4f}
+.tag-step .step-sub{font-weight:400;color:#98a2b3;font-size:11.5px}
+.step-no{width:20px;height:20px;border-radius:50%;background:#e6f7f6;color:#0e7f7f;border:1px solid #b5e3e0;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex:none}
+.step-arrow{font-size:11.5px;color:#8a94a3;padding-left:32px;line-height:1.1;margin:0}
+.acp-card{border:1px solid #e5e9ef;border-radius:10px;padding:10px;background:#fff}
+.acp-effect{margin-top:10px;padding:8px 10px;border:1px solid #e5e9ef;border-radius:8px;background:#fafcfe;font-size:12px;color:#4a5563}
+.acp-effect b{color:#0e7f7f}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">
+        <svg viewBox="0 0 20 20" width="17" height="17" fill="currentColor"><circle cx="10" cy="10" r="7.2" fill="#fff"/><circle cx="7.2" cy="7.6" r="1.9" fill="#1e2b4a"/><circle cx="12.8" cy="7.6" r="1.9" fill="#1e2b4a"/><ellipse cx="10" cy="12.4" rx="2.4" ry="1.7" fill="#1e2b4a"/></svg>
+      </span>熊猫睡眠管理后台
+    </div>
+    <div class="crumb-wrap">
+      <span class="hamburger" title="折叠菜单">
+        <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg>
+      </span>
+      <nav class="crumb" id="breadcrumb"></nav>
+    </div>
+    <div class="top-right">
+      <span class="avatar">凌</span><span>凌晓</span><span class="caret">▾</span>
+    </div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main">
+      <div class="tabbar" id="tabbar"></div>
+      <div class="content" id="content"></div>
+    </main>
+  </div>
+</div>
+<div class="toast-wrap" id="toastWrap"></div>
+<div class="modal-overlay hidden" id="modalOverlay"><div class="modal" id="modal"></div></div>
+
+<script>
+(function(){
+'use strict';
+
+/* =========================================================
+   工具
+   ========================================================= */
+const $ = (sel, root) => (root || document).querySelector(sel);
+const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel));
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad = n => String(n).padStart(2, '0');
+const NOW = '2026-11-04 12:00';
+function toast(msg, type) {
+  const wrap = $('#toastWrap');
+  const el = document.createElement('div');
+  el.className = 'toast ' + (type || 'success');
+  el.innerHTML = '<span class="t-ico">' + (type === 'error' ? '!' : type === 'info' ? 'i' : '✓') + '</span><span>' + esc(msg) + '</span>';
+  wrap.appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .2s'; setTimeout(() => el.remove(), 220); }, 2600);
+}
+
+/* ---------- 封面 / 背景 SVG（内联 data URI，无外部依赖） ---------- */
+const ART_PALETTES = [
+  ['#1e3a5f', '#3f7d8c', '#a8d8c8'], ['#4a3b2a', '#a8895b', '#e2d3b3'],
+  ['#25324a', '#4a6785', '#9db4c9'], ['#1f3340', '#356b72', '#7fb8a8'],
+  ['#2c2140', '#6b4a7a', '#c9a7d6'], ['#3b2a26', '#8a5a44', '#d9a77c'],
+  ['#173042', '#2f6f8a', '#8fd0e0'], ['#302a1c', '#7a6a3a', '#d9c77c'],
+  ['#221b36', '#4b3e78', '#a89bd9'], ['#1c2b26', '#3f6b55', '#a8d8b8'],
+  ['#2b1f2f', '#7a4a5e', '#d9a7b4'], ['#1b2a4a', '#3d6d8f', '#8fc5b0']
+];
+function artSVG(idx, w, h) {
+  const p = ART_PALETTES[idx % ART_PALETTES.length];
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '" viewBox="0 0 240 240" preserveAspectRatio="xMidYMid slice">'
+    + '<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + p[0] + '"/><stop offset=".58" stop-color="' + p[1] + '"/><stop offset="1" stop-color="' + p[2] + '"/></linearGradient>'
+    + '<radialGradient id="m" cx="35%" cy="30%" r="60%"><stop offset="0" stop-color="#ffffff" stop-opacity=".85"/><stop offset=".55" stop-color="#ffffff" stop-opacity=".16"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient></defs>'
+    + '<rect width="240" height="240" fill="url(#g)"/><circle cx="120" cy="112" r="62" fill="url(#m)"/>'
+    + '<circle cx="86" cy="66" r="2" fill="#fff" opacity=".8"/><circle cx="168" cy="82" r="1.5" fill="#fff" opacity=".65"/>'
+    + '<circle cx="152" cy="48" r="1" fill="#fff" opacity=".5"/><path d="M0 186 Q60 160 120 182 T240 176 V240 H0 Z" fill="#000" opacity=".18"/></svg>';
+  return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+}
+function art(idx) { return artSVG(idx, 240, 240); }          // 1:1
+function art34(idx) { return artSVG(idx, 270, 360); }         // 3:4 竖版
+function art54(idx) { return artSVG(idx, 320, 256); }         // 5:4 横版
+function bgArt(idx) {
+  const p = ART_PALETTES[idx % ART_PALETTES.length];
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="360" height="640" viewBox="0 0 360 640">'
+    + '<defs><linearGradient id="g" x1="0" y1="0" x2=".4" y2="1"><stop offset="0" stop-color="#0b1528"/><stop offset=".45" stop-color="' + p[0] + '"/><stop offset="1" stop-color="' + p[1] + '"/></linearGradient>'
+    + '<radialGradient id="moon" cx="70%" cy="20%" r="30%"><stop offset="0" stop-color="#f7edc8" stop-opacity=".95"/><stop offset=".5" stop-color="#f7edc8" stop-opacity=".25"/><stop offset="1" stop-color="#f7edc8" stop-opacity="0"/></radialGradient></defs>'
+    + '<rect width="360" height="640" fill="url(#g)"/><rect width="360" height="300" fill="url(#moon)"/>'
+    + '<g fill="#fff" opacity=".75"><circle cx="42" cy="90" r="1.6"/><circle cx="120" cy="56" r="1"/><circle cx="250" cy="120" r="1.4"/><circle cx="310" cy="60" r="1"/><circle cx="180" cy="158" r="1.2"/></g>'
+    + '<path d="M0 420 Q90 380 180 408 T360 396 V640 H0 Z" fill="#050b16" opacity=".55"/></svg>';
+  return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+}
+function bgArt32(idx) {
+  // 报告页顶部头图区 3:2（建议 1500×1000）
+  const p = ART_PALETTES[idx % ART_PALETTES.length];
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200" viewBox="0 0 360 240" preserveAspectRatio="xMidYMid slice">'
+    + '<defs><linearGradient id="g" x1="0" y1="0" x2=".5" y2="1"><stop offset="0" stop-color="#0b1528"/><stop offset=".45" stop-color="' + p[0] + '"/><stop offset="1" stop-color="' + p[1] + '"/></linearGradient>'
+    + '<radialGradient id="moon" cx="72%" cy="28%" r="34%"><stop offset="0" stop-color="#f7edc8" stop-opacity=".95"/><stop offset=".5" stop-color="#f7edc8" stop-opacity=".25"/><stop offset="1" stop-color="#f7edc8" stop-opacity="0"/></radialGradient></defs>'
+    + '<rect width="360" height="240" fill="url(#g)"/><rect width="360" height="150" fill="url(#moon)"/>'
+    + '<g fill="#fff" opacity=".75"><circle cx="44" cy="40" r="1.6"/><circle cx="120" cy="28" r="1"/><circle cx="250" cy="52" r="1.4"/><circle cx="310" cy="30" r="1"/></g>'
+    + '<path d="M0 190 Q90 160 180 182 T360 172 V240 H0 Z" fill="#050b16" opacity=".5"/></svg>';
+  return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+}
+
+/* =========================================================
+   基础字典
+   ========================================================= */
+const TYPES = ['白噪音', '助眠冥想', '睡前故事', '钵音疗愈', '深睡眠脑波', '舒眠音乐'];
+const EFFECTS = ['快速入睡', '提升深睡', '舒缓心绪', '遮蔽杂音', '放松身体', '陪伴入眠', '专注'];
+const LEGACY_TYPES = ['助眠冥想', '舒眠音乐', '睡前故事', '钵音疗愈', '深睡眠脑波', '白噪音'];
+const LEGACY_SUBTYPES = {
+  '助眠冥想': ['快速入睡', '新手入门', '正念冥想', '可视化冥想', '呼吸放松', '身体扫描', '肌肉放松', '情绪安抚'],
+  '舒眠音乐': ['轻柔钢琴', '雨声音乐', '竖琴', '摇篮曲', '氛围音乐', '轻柔器乐'],
+  '睡前故事': ['晚安电台', '宝宝哄睡', '哄睡放松'],
+  '钵音疗愈': ['静心·钵铃', '自然·声景', '持续长音', '钵音·氛围'],
+  '深睡眠脑波': ['Delta波', 'Theta波', 'Alpha波', '深度睡眠', '疗愈频率', 'Beta波'],
+  '白噪音': ['课堂', '雨声', '哄睡', '大自然声', '城市', '沉浸音效', '生活之声', '动物', '电子噪音']
+};
+const LEGACY_TYPE_COMPAT = { '白噪音': '白噪音', '助眠冥想': '助眠冥想', '睡前故事': '睡前故事', '深睡眠脑波': '深睡眠脑波', '舒眠音乐': '舒眠音乐', '钵音疗愈': '钵音疗愈', '沉浸式哄睡': '沉浸式哄睡' };
+const PERMISSIONS = ['免费', 'VIP', 'SVIP'];
+const FEATURED_SLOT = { '白噪音': '精选混音', '舒眠音乐': '精选音乐', '睡前故事': '精选故事', '钵音疗愈': '精选钵音' };
+function featuredSlotsFor(type) { return [FEATURED_SLOT[type] || '精选音频']; }
+const LONG_INTRO = '给今晚留一段安静的时间。深度放松脑波陪你放慢节奏，让身体与情绪慢慢安定下来。选择一个舒适的姿势，轻轻闭上眼睛，把注意力带回自己的呼吸。不用刻意追求某种状态，只需跟随声音，感受此刻的安静。';
+
+/* =========================================================
+   示例数据
+   ========================================================= */
+let CONTENT = [
+  { id: 529, name: '深度放松', type: '深睡眠脑波', sub: '深度睡眠', kind: 'single', cover34: art34(11), cover11: art(11), introBg: art54(11), recBg: art54(4), introTitle: '深度放松｜让大脑慢下来，进入深睡', introBody: LONG_INTRO, effectMain: '提升深睡', permission: 'VIP', status: 'on', newDate: '2026-11-01', sort: 0, sku: 'SKU20261029001', audioUrl: 'https://cdn.navolove.com/resource/sleep/uploads/202410/66dabd99e98bb.mp3', audioDuration: '12:30', trialDuration: '03:00', color: '#A8B5A2', seriesItems: [], topFeatured: true, homeFeatured: true },
+  { id: 528, name: '432Hz–深度睡眠', type: '深睡眠脑波', sub: '深睡Delta波', kind: 'single', cover34: art34(6), cover11: art(6), introBg: art54(6), recBg: art54(7), introTitle: '', introBody: '432Hz 深度睡眠脑波，帮助思绪慢慢安静，身体进入更深的放松状态。', effectMain: '提升深睡', permission: 'SVIP', status: 'on', newDate: '2026-10-28', sort: 13, sku: 'SKU20261028002', audioUrl: 'https://cdn.navolove.com/resource/sleep/uploads/202410/432hz.mp3', audioDuration: '15:00', trialDuration: '03:00', color: '', seriesItems: [], topFeatured: false, homeFeatured: false },
+  { id: 527, name: '助眠冥想：晚间感恩', type: '助眠冥想', sub: '情绪安抚', kind: 'single', cover34: art34(1), cover11: art(1), introBg: art54(3), recBg: art54(5), introTitle: '', introBody: '在睡前用几分钟回顾今天值得感谢的小事，让情绪平稳落地，带着暖意入睡。', effectMain: '舒缓心绪', permission: '免费', status: 'on', newDate: '2026-10-26', sort: 21, sku: '', audioUrl: 'https://cdn.navolove.com/resource/sleep/uploads/202410/gratitude.mp3', audioDuration: '10:00', trialDuration: '', color: '', seriesItems: [], topFeatured: true, homeFeatured: true },
+  { id: 526, name: '雨林鸟鸣', type: '白噪音', sub: '动物', kind: 'single', cover34: art34(3), cover11: art(3), introBg: null, recBg: art54(1), introTitle: '', introBody: '', effectMain: '遮蔽杂音', permission: '免费', status: 'on', newDate: '2026-10-25', sort: 21, sku: '', audioUrl: 'https://cdn.navolove.com/resource/sleep/uploads/202410/rainforest.mp3', audioDuration: '20:00', trialDuration: '', color: '#A8B5A2', seriesItems: [], topFeatured: true, homeFeatured: false },
+  { id: 525, name: '空山鹤鸣', type: '白噪音', sub: '动物', kind: 'single', cover34: art34(0), cover11: art(0), introBg: null, recBg: art54(2), introTitle: '', introBody: '', effectMain: '遮蔽杂音', permission: '免费', status: 'on', newDate: '2026-10-24', sort: 21, sku: '', audioUrl: 'https://cdn.navolove.com/resource/sleep/uploads/202410/crane.mp3', audioDuration: '18:00', trialDuration: '', color: '#C7A8D9', seriesItems: [], topFeatured: false, homeFeatured: false },
+  { id: 524, name: '蝴蝶振翅', type: '白噪音', sub: '动物', kind: 'single', cover34: art34(10), cover11: art(10), introBg: null, recBg: art54(6), introTitle: '', introBody: '', effectMain: '遮蔽杂音', permission: '免费', status: 'on', newDate: '2026-10-22', sort: 21, sku: '', audioUrl: 'https://cdn.navolove.com/resource/sleep/uploads/202410/butterfly.mp3', audioDuration: '16:00', trialDuration: '', color: '#5E3F5E', seriesItems: [], topFeatured: false, homeFeatured: false },
+  { id: 523, name: '羊群漫步', type: '白噪音', sub: '课堂', kind: 'single', cover34: art34(9), cover11: art(9), introBg: null, recBg: art54(8), introTitle: '', introBody: '', effectMain: '遮蔽杂音', permission: '免费', status: 'on', newDate: '2026-10-20', sort: 21, sku: '', audioUrl: 'https://cdn.navolove.com/resource/sleep/uploads/202410/sheep.mp3', audioDuration: '22:00', trialDuration: '', color: '#7FB77E', seriesItems: [], topFeatured: false, homeFeatured: false },
+  { id: 522, name: '查查拉卡鸟', type: '白噪音', sub: '动物', kind: 'single', coverBroken: true, cover34: art34(2), cover11: art(2), introBg: null, recBg: art54(9), introTitle: '', introBody: '', effectMain: '遮蔽杂音', permission: '免费', status: 'off', newDate: '2026-10-18', sort: 21, sku: '', audioUrl: 'https://cdn.navolove.com/resource/sleep/uploads/202410/bird.mp3', audioDuration: '14:00', trialDuration: '', color: '#4FA37C', seriesItems: [], topFeatured: false, homeFeatured: false },
+  { id: 521, name: '星星小卖部', type: '睡前故事', sub: '宝宝哄睡', kind: 'single', cover34: art34(5), cover11: art(5), introBg: art54(5), recBg: art54(10), introTitle: '星星小卖部｜把今晚的梦留给孩子', introBody: '森林深处有一家只在夜里营业的小卖部，货架上摆满了星星、云朵和软软的梦。今晚，小狐狸想买一颗最亮的星星带回家……', effectMain: '陪伴入眠', permission: 'VIP', status: 'on', newDate: '2026-10-16', sort: 21, sku: 'SKU20261016003', audioUrl: 'https://cdn.navolove.com/resource/sleep/uploads/202410/story1.mp3', audioDuration: '12:00', trialDuration: '02:00', color: '', seriesItems: [], topFeatured: true, homeFeatured: true },
+  { id: 520, name: '绿野仙踪', type: '睡前故事', sub: '宝宝哄睡', kind: 'single', cover34: art34(9), cover11: art(9), introBg: null, recBg: art54(6), introTitle: '', introBody: '', effectMain: '陪伴入眠', permission: '免费', status: 'on', newDate: '2026-10-15', sort: 21, sku: '', audioUrl: 'https://cdn.navolove.com/resource/sleep/uploads/202410/story2.mp3', audioDuration: '14:00', trialDuration: '', color: '', seriesItems: [], topFeatured: true, homeFeatured: false },
+  { id: 519, name: '钵音静心', type: '钵音疗愈', sub: '静心·钵铃', kind: 'series', cover34: art34(7), cover11: art(7), introBg: art54(7), recBg: art54(0), introTitle: '钵音静心｜21 天颂钵练习', introBody: '以颂钵与钵铃的泛音为引导，配合呼吸，让身体逐渐沉静下来。适合睡前或午休时练习。', effectMain: '舒缓心绪', permission: 'SVIP', status: 'on', newDate: '2026-10-12', sort: 21, sku: 'SKU20261012004', audioUrl: 'https://cdn.navolove.com/resource/sleep/uploads/202410/bowl_intro.mp3', audioDuration: '05:00', trialDuration: '03:00', color: '', seriesItems: [
+    { source: 'upload', audio: 'https://cdn.navolove.com/resource/sleep/uploads/202410/bowl_01.mp3', contentId: '', name: '第 1 天：静心入门', duration: '12:00', trial: '03:00' },
+    { source: 'contentId', audio: '', contentId: '526', name: '雨林鸟鸣（复用内容）', duration: '20:00', trial: '' },
+    { source: 'upload', audio: 'https://cdn.navolove.com/resource/sleep/uploads/202410/bowl_03.mp3', contentId: '', name: '第 3 天：身体扫描', duration: '16:00', trial: '' }
+  ], topFeatured: false },
+  { id: 501, name: '21天睡眠改善计划', type: '助眠冥想', sub: '新手入门', kind: 'series', cover34: art34(2), cover11: art(2), introBg: art54(2), recBg: art54(8), introTitle: '21天睡眠改善计划｜从入睡到深睡', introBody: '连续 21 天，用呼吸、身体扫描与睡前练习，逐步把入睡变成一件可以练习的事。每天 10–15 分钟，跟着音频完成即可。', effectMain: '舒缓心绪', permission: 'SVIP', status: 'on', newDate: '2026-11-02', sort: 5, sku: 'SKU20261102010', audioUrl: '', audioDuration: '', trialDuration: '', color: '', seriesItems: [
+    { source: 'upload', audio: 'https://cdn.navolove.com/resource/sleep/uploads/202410/plan_day1.mp3', contentId: '', name: '第 1 天：认识你的睡眠', duration: '12:00', trial: '03:00' },
+    { source: 'contentId', audio: '', contentId: '527', name: '第 2 天：晚间感恩（复用）', duration: '10:00', trial: '03:00' },
+    { source: 'upload', audio: 'https://cdn.navolove.com/resource/sleep/uploads/202410/plan_day3.mp3', contentId: '', name: '第 3 天：身体扫描', duration: '15:00', trial: '' }
+  ], topFeatured: true },
+  { id: 502, name: '修复深睡眠', type: '深睡眠脑波', sub: '深度睡眠', kind: 'series', cover34: art34(4), cover11: art(4), introBg: art54(4), recBg: art54(9), introTitle: '修复深睡眠｜把深睡找回来', introBody: '从脑波引导到身体放松，用 2 周时间重建稳定深睡节律。适合长期浅睡、易醒人群，建议睡前固定时间收听。', effectMain: '提升深睡', permission: 'VIP', status: 'on', newDate: '2026-10-30', sort: 6, sku: 'SKU20261030011', audioUrl: '', audioDuration: '', trialDuration: '', color: '', seriesItems: [
+    { source: 'upload', audio: 'https://cdn.navolove.com/resource/sleep/uploads/202410/deep_day1.mp3', contentId: '', name: '深睡引导：身体下沉', duration: '20:00', trial: '03:00' },
+    { source: 'contentId', audio: '', contentId: '528', name: '432Hz 深度睡眠（复用）', duration: '15:00', trial: '03:00' }
+  ], topFeatured: false },
+  { id: 503, name: '7 天正念冥想入门', type: '助眠冥想', sub: '正念冥想', kind: 'series', cover34: art34(6), cover11: art(6), introBg: art54(6), recBg: art54(10), introTitle: '7 天正念冥想入门｜每天 10 分钟', introBody: '从呼吸觉察开始，逐步练习身体扫描与情绪观察，让睡前的大脑慢下来。零基础可跟练。', effectMain: '舒缓心绪', permission: '免费', status: 'on', newDate: '2026-10-27', sort: 7, sku: '', audioUrl: '', audioDuration: '', trialDuration: '', color: '', seriesItems: [
+    { source: 'upload', audio: 'https://cdn.navolove.com/resource/sleep/uploads/202410/mind_day1.mp3', contentId: '', name: '第 1 天：呼吸练习', duration: '08:00', trial: '' },
+    { source: 'upload', audio: 'https://cdn.navolove.com/resource/sleep/uploads/202410/mind_day2.mp3', contentId: '', name: '第 2 天：正念静坐', duration: '10:00', trial: '' }
+  ], topFeatured: false },
+  { id: 518, name: '夜行蝙蝠', type: '白噪音', sub: '动物', kind: 'single', cover34: null, cover11: null, introBg: null, recBg: art54(11), introTitle: '', introBody: '', effectMain: '遮蔽杂音', permission: '免费', status: 'on', newDate: '2026-10-10', sort: 21, sku: '', audioUrl: 'https://cdn.navolove.com/resource/sleep/uploads/202410/bat.mp3', audioDuration: '16:00', trialDuration: '', color: '#5FA8D3', seriesItems: [], topFeatured: false, homeFeatured: false }
+];
+
+// 数据规范化：单曲首页精选默认值；系列课每个音频补两张封面（1:1 / 5:4）
+CONTENT.forEach(function (c) {
+  if (c.kind !== 'series') {
+    if (typeof c.homeFeatured !== 'boolean') c.homeFeatured = false;
+  } else {
+    (c.seriesItems || []).forEach(function (it, i) {
+      if (!it.cover11) it.cover11 = art((i + 3) % ART_PALETTES.length);
+    });
+  }
+});
+
+// 旧课程类型 + 小分类（直接复用现有后台字段）
+CONTENT.forEach(function (c) {
+  c.legacyType = LEGACY_TYPES.indexOf(c.type) >= 0 ? c.type : (LEGACY_TYPE_COMPAT[c.type] || '白噪音');
+  const subs = LEGACY_SUBTYPES[c.legacyType] || [];
+  if (!subs.length) {
+    c.legacySub = '';
+  } else if (c.legacySub && subs.indexOf(c.legacySub) >= 0) {
+    // keep
+  } else if (c.sub && subs.indexOf(c.sub) >= 0) {
+    c.legacySub = c.sub;
+  } else {
+    c.legacySub = subs[0];
+  }
+});
+
+// 白噪音：图标所有白噪音单曲都有；是否精选=是 才有白噪音封面 + 音频 ID 列表（示例：523 为精选）
+CONTENT.forEach(function (c, ci) {
+  if (c.kind !== 'single' || c.legacyType !== '白噪音') return;
+  if (!c.icon) c.icon = art(ci % ART_PALETTES.length);
+  if (c.id === 523) {
+    c.topFeatured = true;
+    if (!c.refTracks || !c.refTracks.length) {
+      c.refTracks = [526, 518].map(function (id) {
+        const r = CONTENT.find(function (x) { return x.id === id; });
+        return r ? { contentId: r.id, name: r.name, duration: r.audioDuration || '' } : null;
+      }).filter(Boolean);
+    }
+    if (!c.wnCover && c.cover11) c.wnCover = c.cover11;
+  } else {
+    c.topFeatured = false;
+  }
+  (c.refTracks || []).forEach(function (t) {
+    const r = CONTENT.find(function (x) { return x.id === t.contentId; });
+    if (r) { t.name = r.name; t.duration = r.audioDuration || ''; }
+  });
+});
+
+// 旧字段 & 系列课章节（现有后台字段，保留并追加）
+CONTENT.forEach(function (c) {
+  if (c.legacyDesc == null) c.legacyDesc = c.introBody || '';
+  if (c.legacyCover == null) c.legacyCover = c.cover11 || c.cover34 || null;
+  if (c.isFree == null) c.isFree = c.permission === '免费';
+  if (c.isNew == null) c.isNew = !!c.newDate;
+  if (c.memberPlan == null) c.memberPlan = c.permission === 'SVIP' ? '年卡' : (c.permission === 'VIP' ? '月卡' : '无');
+  if (c.memberPlan !== '有' && c.memberPlan !== '无') c.memberPlan = (c.memberPlan === '无' ? '无' : '有');
+  if (c.featuredSort == null) c.featuredSort = 0;
+  if (c.homeFeaturedSort == null) c.homeFeaturedSort = 0;
+  if (!FEATURED_SLOT[c.legacyType]) c.topFeatured = false;
+  if (c.legacyStatus == null) c.legacyStatus = c.status === 'on' ? '已上架' : '已下架';
+  if (c.newEnd == null) c.newEnd = '';
+  if (!c.chapters) c.chapters = [];
+  if (c.kind === 'series' && !c.chapters.length && (c.seriesItems || []).length) {
+    c.chapters = c.seriesItems.map(function (it, idx) {
+      const cov = it.cover11 || c.cover11 || art(idx + 2);
+      return {
+        id: c.id * 100 + idx + 1,
+        name: it.name || ('小课 ' + (idx + 1)),
+        audioUrl: it.audio || 'https://cdn.navolove.com/resource/sleep/uploads/202410/chapter_' + idx + '.mp3',
+        audioDuration: it.duration || '',
+        cover: cov,
+        isFree: (c.permission === '免费') ? '免费' : '付费',
+        onlineDate: c.newDate || '',
+        visible: '显示',
+        sort: idx,
+        cover11: it.cover11 || cov
+      };
+    });
+  }
+});
+
+const RANK_INIT = [
+  { id: 529, subtitle: '雨季助眠首选' }, { id: 528, subtitle: '深睡黑科技' }, { id: 527, subtitle: '睡前情绪安抚' },
+  { id: 526, subtitle: '雨声白噪音' }, { id: 525, subtitle: '空山静心' }, { id: 524, subtitle: '蝴蝶振翅' },
+  { id: 523, subtitle: '草原入梦' }, { id: 521, subtitle: '宝宝哄睡神器' }, { id: 520, subtitle: '今晚童话' },
+  { id: 519, subtitle: '颂钵疗愈' }
+];
+let RANKING = RANK_INIT.map(r => ({ id: String(r.id), subtitle: r.subtitle }));
+
+let SEARCH = [
+  { id: 1, word: '睡前故事', suffix: 'hot', sort: 1, status: 'on', start: '', end: '' },
+  { id: 2, word: '提升深睡', suffix: 'new', sort: 2, status: 'on', start: '', end: '' },
+  { id: 3, word: '快速入睡', suffix: 'hot', sort: 3, status: 'on', start: '', end: '' },
+  { id: 4, word: '焦虑', suffix: 'none', sort: 4, status: 'on', start: '', end: '' },
+  { id: 5, word: '白噪音', suffix: 'none', sort: 5, status: 'off', start: '', end: '' }
+];
+
+// 客户端本地预置图（原型用生成的本地占位图模拟）
+const PRESET_BGS = ['01', '02', '03', '04', '05', '06'].map(function (code, i) {
+  return { code: code, src: bgArt32(i % 6) };
+});
+function presetSrc(code) {
+  const b = PRESET_BGS.find(function (x) { return x.code === code; });
+  return b ? b.src : null;
+}
+let ASSETS = [
+  { id: 1, code: '01', enabled: true, start: '2026-11-01 00:00', end: '2027-01-31 23:59', updated: '2026-11-03 20:10' },
+  { id: 2, code: '02', enabled: false, start: '2026-08-01 00:00', end: '2026-10-31 23:59', updated: '2026-10-31 18:22' },
+  { id: 3, code: '03', enabled: true, start: '2027-02-01 00:00', end: '2027-03-31 23:59', updated: '2026-10-31 18:20' },
+  { id: 4, code: '04', enabled: false, start: '', end: '', updated: '2026-06-01 09:30' },
+  { id: 5, code: '05', enabled: false, start: '', end: '', updated: '2026-01-01 09:30' }
+];
+
+
+
+/* =========================================================
+   全局状态
+   ========================================================= */
+const UI = {
+  active: 'content',
+  tabs: [{ key: 'content', title: '内容配置（新）' }],
+  chapterId: null,
+  sidebarOpen: true,
+  filter: { name: '', kind: '', legacyType: '', status: '' },
+  rankPreview: { tab: 'home', page: 0 },
+  modal: null
+};
+
+/* =========================================================
+   左侧菜单 / 顶栏 / 页签 / 路由
+   ========================================================= */
+const ICONS = {
+  grid: '<svg viewBox="0 0 20 20" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="11" y="3" width="6" height="6" rx="1"/><rect x="3" y="11" width="6" height="6" rx="1"/><rect x="11" y="11" width="6" height="6" rx="1"/></svg>',
+  doc: '<svg viewBox="0 0 20 20" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 2.5h6.5L15 6v11.5H5z"/><path d="M11.5 2.5V6H15"/><path d="M7.5 9.5h5M7.5 12h5"/></svg>',
+  rank: '<svg viewBox="0 0 20 20" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 16V9M10 16V4M16 16v-5"/></svg>',
+  search: '<svg viewBox="0 0 20 20" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="9" r="5.5"/><path d="M13.2 13.2L17 17"/></svg>',
+  image: '<svg viewBox="0 0 20 20" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="4" width="14" height="12" rx="1.5"/><circle cx="7.5" cy="8.5" r="1.3"/><path d="M4 14l4-4 3 3 2-2 3 3"/></svg>',
+  article: '<svg viewBox="0 0 20 20" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 3h9l3 3v11H4z"/><path d="M7 8h6M7 11h6M7 14h4"/></svg>',
+  books: '<svg viewBox="0 0 20 20" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3.5" y="3.5" width="5" height="13" rx="1"/><rect x="10" y="3.5" width="5" height="13" rx="1"/><path d="M5 6.5h2M11.5 6.5h2M5 13.5h2M11.5 13.5h2"/></svg>',
+  moon: '<svg viewBox="0 0 20 20" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15.5 12.5A6 6 0 0 1 7.5 4.5a6 6 0 1 0 8 8z"/></svg>',
+  quote: '<svg viewBox="0 0 20 20" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 6.5c-2 .4-3.3 2-3.3 4.1 0 1.6 1 2.7 2.4 2.7 1.3 0 2.2-.9 2.2-2.1 0-1.2-.8-2-2-2-.2 0-.5 0-.7.1.2-1 1-1.8 2-2.1z"/><path d="M15.3 6.5c-2 .4-3.3 2-3.3 4.1 0 1.6 1 2.7 2.4 2.7 1.3 0 2.2-.9 2.2-2.1 0-1.2-.8-2-2-2-.2 0-.5 0-.7.1.2-1 1-1.8 2-2.1z"/></svg>',
+  order: '<svg viewBox="0 0 20 20" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="4" y="3" width="12" height="14" rx="1"/><path d="M7 7h6M7 10h6M7 13h4"/></svg>',
+  megaphone: '<svg viewBox="0 0 20 20" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3.5 8.5v3h2.2l5.8 3.2V5.3L5.7 8.5H3.5z"/><path d="M12.5 7.6a2.4 2.4 0 0 1 0 4.8"/><path d="M6 11.8v3.4"/></svg>',
+  chart: '<svg viewBox="0 0 20 20" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 16.5h14"/><path d="M5.5 16V10M10 16V5.5M14.5 16v-3.5"/></svg>',
+  gear: '<svg viewBox="0 0 20 20" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="2.6"/><path d="M10 3v2M10 15v2M3 10h2M15 10h2M5 5l1.5 1.5M13.5 13.5L15 15M15 5l-1.5 1.5M6.5 13.5L5 15"/></svg>',
+  gift: '<svg viewBox="0 0 20 20" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3.5" y="8" width="13" height="8.5" rx="1"/><path d="M3.5 11.4h13M10 8v8.5"/><path d="M10 8c-1-2.6-2.3-3.6-3.6-3S5 7.2 6.6 8M10 8c1-2.6 2.3-3.6 3.6-3S15 7.2 13.4 8"/></svg>',
+  user: '<svg viewBox="0 0 20 20" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="7" r="3"/><path d="M4.5 16.5c.8-3.1 2.9-4.6 5.5-4.6s4.7 1.5 5.5 4.6"/></svg>'
+};
+const SIDE_MENU = [
+  { key: 'content-mgmt', label: '内容配置管理', icon: 'grid', open: true, children: [
+    { key: 'courses', label: '课程配置', icon: 'books', open: true, children: [
+      { key: 'content', label: '内容配置（新）', icon: 'doc' },
+      { key: 'contentOld', label: '内容配置（旧）', icon: 'doc' },
+      { key: 'rank', label: '榜单配置', icon: 'rank' },
+      { key: 'search', label: '搜索发现配置', icon: 'search' },
+      { key: 'assets', label: '睡眠报告背景图', icon: 'image' }
+    ] },
+    { key: 'article', label: '文章配置', icon: 'article' },
+    { key: 'dream', label: '解梦配置', icon: 'moon' },
+    { key: 'quote', label: '每日寄语', icon: 'quote' }
+  ]},
+  { key: 'orders', label: '订单管理', icon: 'order' },
+  { key: 'ops', label: '运营配置', icon: 'megaphone' },
+  { key: 'stats', label: '数据统计', icon: 'chart' },
+  { key: 'site', label: '站内功能配置', icon: 'gear' },
+  { key: 'activity', label: '活动管理', icon: 'gift' },
+  { key: 'users', label: '用户管理', icon: 'user' }
+];
+const PAGES = {
+  content: { tab: '内容配置（新）', crumb: ['主页', '内容配置管理', '课程配置', '内容配置（新）'] },
+  contentOld: { tab: '内容配置（旧）', crumb: ['主页', '内容配置管理', '课程配置', '内容配置（旧）'], placeholder: '内容配置（旧）' },
+  rank: { tab: '榜单配置', crumb: ['主页', '内容配置管理', '课程配置', '榜单配置'] },
+  search: { tab: '搜索发现配置', crumb: ['主页', '内容配置管理', '课程配置', '搜索发现配置'] },
+  assets: { tab: '睡眠报告背景图', crumb: ['主页', '内容配置管理', '课程配置', '睡眠报告背景图'] },
+  article: { tab: '文章配置', crumb: ['主页', '内容配置管理', '文章配置'], placeholder: '文章配置' },
+  dream: { tab: '解梦配置', crumb: ['主页', '内容配置管理', '解梦配置'], placeholder: '解梦配置' },
+  quote: { tab: '每日寄语', crumb: ['主页', '内容配置管理', '每日寄语'], placeholder: '每日寄语' }
+};
+
+function renderSidebar() {
+  let html = '';
+  SIDE_MENU.forEach(function (item) {
+    if (item.children) {
+      html += '<div class="menu-item' + (item.open ? ' open' : '') + '" data-group="' + item.key + '">' +
+        '<span class="m-ico">' + ICONS[item.icon] + '</span><span>' + item.label + '</span>' +
+        '<span class="m-caret">▾</span></div>';
+      if (item.open) {
+        item.children.forEach(function (child) {
+          if (child.children) {
+            html += '<div class="menu-child menu-parent' + (child.open ? ' open' : '') + '" data-subgroup="' + child.key + '"><span class="mc-ico">' + ICONS[child.icon] + '</span>' + esc(child.label) + '<span class="mc-arrow">▾</span></div>';
+            if (child.open) {
+              child.children.forEach(function (grand) {
+                const gActive = UI.active === grand.key ? ' active' : '';
+                html += '<div class="menu-grandchild' + gActive + '" data-nav="' + grand.key + '"><span class="mc-dot"></span>' + grand.label + '</div>';
+              });
+            }
+            return;
+          }
+          const active = UI.active === child.key ? ' active' : '';
+          html += '<div class="menu-child' + active + '" data-nav="' + child.key + '"><span class="mc-ico">' + ICONS[child.icon] + '</span>' + child.label + '</div>';
+        });
+      }
+    } else {
+      html += '<div class="menu-item" data-nav="' + item.key + '"><span class="m-ico">' + ICONS[item.icon] + '</span><span>' + item.label + '</span><span class="m-caret">▾</span></div>';
+    }
+  });
+  $('#sidebar').innerHTML = html;
+}
+function renderTabs() {
+  $('#tabbar').innerHTML = UI.tabs.map(function (t) {
+    return '<span class="tab' + (t.key === UI.active ? ' active' : '') + '" data-tab-switch="' + t.key + '">' + esc(t.title) +
+      '<span class="x" data-tab-close="' + t.key + '">×</span></span>';
+  }).join('');
+}
+function renderBreadcrumb() {
+  const meta = (UI.active === 'content' && UI.chapterId) ? { crumb: ['主页', '内容配置管理', '课程配置', '内容配置（新）', '系列课内容配置'] } : (PAGES[UI.active] || { crumb: ['主页'] });
+  $('#breadcrumb').innerHTML = meta.crumb.map(function (c, i) {
+    const last = i === meta.crumb.length - 1;
+    return (i > 0 ? '<span class="sep">/</span>' : '') + (last ? '<b>' + esc(c) + '</b>' : esc(c));
+  }).join('');
+}
+function openTab(key) {
+  if (!PAGES[key]) return;
+  if (!UI.tabs.some(function (t) { return t.key === key; })) UI.tabs.push({ key: key, title: PAGES[key].tab });
+  UI.active = key;
+}
+function navigate(key) {
+  if (!PAGES[key]) {
+    const label = SIDE_MENU.find(function (m) { return m.key === key; });
+    toast('「' + (label ? label.label : key) + '」不在本次原型范围', 'info');
+    return;
+  }
+  if (key !== 'content') UI.chapterId = null;
+  openTab(key);
+  renderSidebar();
+  renderTabs();
+  renderBreadcrumb();
+  renderPage();
+}
+function renderPage() {
+  const slot = $('#content');
+  const key = UI.active;
+  if (key === 'content') slot.innerHTML = UI.chapterId ? chapterPageHTML() : contentPageHTML();
+  else if (key === 'rank') slot.innerHTML = rankPageHTML();
+  else if (key === 'search') slot.innerHTML = searchPageHTML();
+  else if (key === 'assets') slot.innerHTML = assetsPageHTML();
+  else slot.innerHTML = placeholderHTML(PAGES[key].placeholder);
+  slot.scrollTop = 0;
+  if (key === 'content') { if (UI.chapterId) bindChapterPage(); else bindContentPage(); }
+  if (key === 'rank') bindRankPage();
+  if (key === 'search') bindSearchPage();
+  if (key === 'assets') bindAssetsPage();
+}
+function placeholderHTML(name) {
+  return '<div class="page"><div class="placeholder"><div class="ph-icon">⧉</div><h3>' + esc(name) + '</h3>' +
+    '<p>该页面不在本次原型范围；本次原型覆盖：内容配置、榜单配置、搜索发现配置、页面素材配置。</p></div></div>';
+}
+
+/* =========================================================
+   内容配置：列表 / 筛选
+   ========================================================= */
+function mediaOf(m) {
+  if (!m) return null;
+  return (typeof m === 'string') ? { src: m, video: false } : m;
+}
+function thumbHTML(m, opts) {
+  const o = opts || {};
+  const media = mediaOf(m);
+  if (!media || !media.src) {
+    return o.broken ? '<div class="thumb broken">加载失败</div>' : '<div class="thumb empty">未配置</div>';
+  }
+  return '<div class="thumb ' + (o.cls || '') + '">' + (media.video
+    ? '<video src="' + esc(media.src) + '" muted loop autoplay playsinline></video><span class="mini-badge">视频</span>'
+    : '<img src="' + esc(media.src) + '" alt="">') + '</div>';
+}
+function introConfigured(item) {
+  return (item.introBody && item.introBody.trim().length > 0) || !!mediaOf(item.introBg);
+}
+function coverState(item) {
+  if (item.legacyType === '白噪音') {
+    const ok = item.topFeatured ? mediaOf(item.wnCover) : mediaOf(item.icon);
+    if (!ok) return 'missing';
+    if (item.coverBroken) return 'broken';
+    return 'normal';
+  }
+  if (!mediaOf(item.cover34) || !mediaOf(item.cover11)) return 'missing';
+  if (item.coverBroken) return 'broken';
+  return 'normal';
+}
+function itemSeries(item) { return item.kind === 'series'; }
+function dash(v) { return v ? esc(String(v)) : '<span class="muted">—</span>'; }
+function coverState(item) {
+  if (item.legacyType === '白噪音') {
+    const ok = item.topFeatured ? mediaOf(item.wnCover) : mediaOf(item.icon);
+    return ok ? 'normal' : 'missing';
+  }
+  if (!mediaOf(item.cover34) || !mediaOf(item.cover11)) return 'missing';
+  if (item.coverBroken) return 'broken';
+  return 'normal';
+}
+function listCoverFor(item) {
+  if (item.legacyType === '白噪音' && mediaOf(item.icon)) return thumbHTML(item.icon);
+  if (mediaOf(item.cover11)) return thumbHTML(item.cover11);
+  if (mediaOf(item.cover34)) return thumbHTML(item.cover34, { cls: 'thumb34' });
+  return '<span class="tag tag-gray">未配置</span>';
+}
+function featuredMerge(item) {
+  const t = !!item.topFeatured, h = !!item.homeFeatured;
+  if (t && h) return '<span class="tag tag-teal">类型精选 + 推荐页精选</span>';
+  if (t) return '<span class="tag tag-teal">类型精选</span>';
+  if (h) return '<span class="tag tag-blue">推荐页精选</span>';
+  return '<span class="muted">—</span>';
+}
+function contentRowHTML(item) {
+  const isSeries = item.kind === 'series';
+  const kindText = isSeries ? ('系列课 · ' + ((item.chapters || []).length) + ' 个小课') : '单课';
+  const permTag = item.permission === '免费' ? '<span class="tag tag-gray">免费</span>' : '<span class="tag tag-blue">' + esc(item.permission) + '</span>';
+  return '<tr data-row-id="' + item.id + '">' +
+    '<td class="mono">' + item.id + '</td>' +
+    '<td><b>' + esc(item.name) + '</b></td>' +
+    '<td><span class="tag ' + (isSeries ? 'tag-blue' : 'tag-gray') + '">' + kindText + '</span></td>' +
+    '<td><span class="tag tag-dark">' + esc(item.legacyType) + '</span></td>' +
+    '<td>' + (item.legacySub ? '<span class="tag tag-gray">' + esc(item.legacySub) + '</span>' : '<span class="muted">—</span>') + '</td>' +
+    '<td>' + listCoverFor(item) + '</td>' +
+    '<td>' + permTag + '</td>' +
+    '<td>' + featuredMerge(item) + '</td>' +
+    '<td>' + dash(item.legacyStatus) + '</td>' +
+    '<td>' + item.sort + '</td>' +
+    '<td><div class="ops"><a data-act="edit" data-id="' + item.id + '">编辑</a><a data-act="view" data-id="' + item.id + '">查看</a><a data-act="copy" data-id="' + item.id + '">复制</a></div></td>' +
+    '</tr>';
+}
+function filterContent() {
+  const f = UI.filter;
+  return CONTENT.filter(function (item) {
+    if (f.name && item.name.indexOf(f.name.trim()) < 0) return false;
+    if (f.kind && item.kind !== f.kind) return false;
+    if (f.legacyType && item.legacyType !== f.legacyType) return false;
+    if (f.status) {
+      const st = item.legacyStatus === '已上架' ? 'on' : 'off';
+      if (st !== f.status) return false;
+    }
+    return true;
+  });
+}
+function contentTableBodyHTML() {
+  const rows = filterContent();
+  if (!rows.length) return '<tr><td colspan="10"><div class="empty-tip">没有符合条件的内容，请调整筛选条件</div></td></tr>';
+  return rows.map(contentRowHTML).join('');
+}
+function contentPageHTML() {
+  const f = UI.filter;
+  const opt = function (v, label, cur) { return '<option value="' + v + '"' + (cur === v ? ' selected' : '') + '>' + label + '</option>'; };
+  return '<div class="page">' +
+    '<div class="query-card">' +
+      '<div class="qf" style="width:190px"><input type="text" id="f-name" placeholder="课程名称" value="' + esc(f.name) + '"></div>' +
+      '<div class="qf" style="width:150px"><select id="f-kind">' + opt('', '课程分类：全部', f.kind) + opt('single', '单课', f.kind) + opt('series', '系列课', f.kind) + '</select></div>' +
+      '<div class="qf" style="width:170px"><select id="f-legacy-type">' + opt('', '课程类型：全部', f.legacyType) + LEGACY_TYPES.map(function (t) { return opt(t, t, f.legacyType); }).join('') + '</select></div>' +
+      '<div class="qf" style="width:140px"><select id="f-status">' + opt('', '状态：全部', f.status) + opt('on', '启用', f.status) + opt('off', '禁用', f.status) + '</select></div>' +
+      '<div class="q-actions">' +
+        '<button class="btn primary" data-act="content-search">搜索</button>' +
+        '<button class="btn" data-act="content-reset">重置</button>' +
+        '<button class="btn primary" data-act="content-add">＋ 添加内容</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="card"><div class="card-head"><div class="card-title"><span class="bar"></span>内容配置列表 <span class="card-sub">共 <b id="contentTotal">' + filterContent().length + '</b> 条 · 单课/系列课共用列表；系列课点「查看」配置小课</span></div>' +
+      '<div class="head-actions"><button class="btn sm" data-act="content-refresh">刷新</button></div></div>' +
+      '<div class="table-wrap"><table class="grid" style="min-width:1080px"><colgroup>' +
+        '<col style="width:56px"><col style="width:160px"><col style="width:120px"><col style="width:110px"><col style="width:95px"><col style="width:70px"><col style="width:72px"><col style="width:150px"><col style="width:76px"><col style="width:50px"><col style="width:120px">' +
+      '</colgroup><thead><tr>' +
+        '<th>课程ID</th><th>课程名称</th><th>课程分类</th><th>课程类型</th><th>小分类</th><th>封面</th><th>内容权限</th><th>精选</th><th>状态</th><th>类型排序</th><th>操作</th>' +
+      '</tr></thead><tbody id="contentTbody">' + contentTableBodyHTML() + '</tbody></table></div>' +
+      '<div class="pagination"><span>共 <b id="contentTotal2">' + filterContent().length + '</b> 条</span><div class="pager"><span class="page-btn active">1</span></div></div>' +
+    '</div></div>';
+}
+function bindContentPage() {}
+function refreshContentTable() {
+  const tb = $('#contentTbody'); if (!tb) return;
+  tb.innerHTML = contentTableBodyHTML();
+  const t1 = $('#contentTotal'); if (t1) t1.textContent = filterContent().length;
+  const t2 = $('#contentTotal2'); if (t2) t2.textContent = filterContent().length;
+}
+function currentSeries() { return CONTENT.find(function (c) { return c.id === UI.chapterId; }); }
+function chapterRowsHTML(s) {
+  if (!s.chapters || !s.chapters.length) return '<tr><td colspan="10"><div class="empty-tip">暂无小课，点击「添加小课」新增</div></td></tr>';
+  return s.chapters.slice().sort(function (a, b) { return (a.sort || 0) - (b.sort || 0); }).map(function (ch, i) {
+    return '<tr data-chapter-id="' + ch.id + '">' +
+      '<td class="col-center">' + (i + 1) + '</td>' +
+      '<td><b>' + esc(ch.name) + '</b></td>' +
+      '<td><span class="mono">' + esc((ch.audioUrl || '').slice(0, 32)) + '</span></td>' +
+      '<td>' + dash(ch.audioDuration) + '</td>' +
+      '<td>' + (mediaOf(ch.cover11) ? thumbHTML(ch.cover11) : '<span class="tag tag-gray">未配置</span>') + '</td>' +
+      '<td>' + dash(ch.isFree) + '</td>' +
+      '<td>' + dash(ch.onlineDate) + '</td>' +
+      '<td>' + dash(ch.visible) + '</td>' +
+      '<td>' + (ch.sort == null ? 0 : ch.sort) + '</td>' +
+      '<td><div class="ops"><a data-act="chapter-edit" data-i="' + i + '">编辑</a><a class="danger" data-act="chapter-del" data-i="' + i + '">删除</a></div></td>' +
+      '</tr>';
+  }).join('');
+}
+function chapterPageHTML() {
+  const s = currentSeries();
+  if (!s) { UI.chapterId = null; return contentPageHTML(); }
+  return '<div class="page"><div class="card"><div class="card-head"><div class="card-title"><span class="bar"></span>系列课内容配置 · ' + esc(s.name) + ' <span class="card-sub">系列课：' + esc(s.name) + ' · 小课不进入内容配置主列表</span></div>' +
+    '<div class="head-actions"><button class="btn sm" data-act="chapter-back">返回内容配置</button><button class="btn primary" data-act="chapter-add">＋ 添加小课</button></div></div>' +
+    '<div class="table-wrap"><table class="grid"><colgroup><col style="width:56px"><col style="width:190px"><col style="width:250px"><col style="width:100px"><col style="width:96px"><col style="width:70px"><col style="width:110px"><col style="width:80px"><col style="width:56px"><col style="width:120px"></colgroup>' +
+    '<thead><tr><th class="col-center">序号</th><th>小课名称</th><th>音视频地址</th><th>音视频时长</th><th>封面（1:1）</th><th>是否免费</th><th>上线时间</th><th>是否显示</th><th>排序</th><th>操作</th></tr></thead>' +
+    '<tbody id="chapterTbody">' + chapterRowsHTML(s) + '</tbody></table></div>' +
+    '<div class="pagination"><span>共 <b id="chapterTotal">' + (s.chapters || []).length + '</b> 个小课</span></div>' +
+    '</div></div>';
+}
+function bindChapterPage() {}
+function refreshChapterPage() {
+  const s = currentSeries(); if (!s) return;
+  const tb = $('#chapterTbody'); if (tb) tb.innerHTML = chapterRowsHTML(s);
+  const t = $('#chapterTotal'); if (t) t.textContent = (s.chapters || []).length;
+}
+
+function openModal(opts) {
+  UI.modal = Object.assign({}, opts.ctx || {}, { _opts: opts });
+  const modal = $('#modal');
+  modal.className = 'modal' + (opts.wide ? ' wide' : '');
+  modal.innerHTML =
+    '<div class="modal-head"><span class="modal-title">' + esc(opts.title) + '</span>' +
+      '<button class="modal-close" data-act="modal-close" title="关闭">×</button></div>' +
+    '<div class="modal-body">' + opts.body + '</div>' +
+    (opts.footer ? '<div class="modal-foot">' + opts.footer + '</div>' : '');
+  $('#modalOverlay').classList.remove('hidden');
+  if (opts.onMount) opts.onMount();
+}
+function closeModal() {
+  UI.modal = null;
+  $('#modalOverlay').classList.add('hidden');
+  $('#modal').innerHTML = '';
+}
+
+/* =========================================================
+   文件上传与预览
+   ========================================================= */
+const UPLOAD_LIMIT = {
+  c34: { imgMax: 2, gifMax: 5, videoMax: 20, ratio: 3 / 4, ratioLabel: '3:4' },
+  c11: { imgMax: 2, gifMax: 5, videoMax: 20, ratio: 1, ratioLabel: '1:1' },
+  introBg: { imgMax: 3, gifMax: 5, videoMax: 20, ratio: 5 / 4, ratioLabel: '5:4' },
+  recBg: { imgMax: 3, gifMax: 5, videoMax: 20, ratio: 5 / 4, ratioLabel: '5:4' },
+  bg: { imgMax: 3, ratio: 3 / 2, ratioLabel: '3:2' },
+  icon: { imgMax: 0.3, ratio: 1, ratioLabel: '1:1', types: ['image/png', 'image/svg+xml'], typeLabel: 'PNG / SVG' },
+  wnCover: { imgMax: 2, gifMax: 5 },
+  legacyCover: { imgMax: 2, gifMax: 5 },
+  chapterCover: { imgMax: 0.2 },
+  chapterCover11: { imgMax: 2, gifMax: 5, ratio: 1, ratioLabel: '1:1' }
+};
+function fmtSize(b) { return b > 1024 * 1024 ? (b / 1024 / 1024).toFixed(1) + 'MB' : Math.round(b / 1024) + 'KB'; }
+function checkRatio(w, h, limits) {
+  if (!limits || !limits.ratio || !w || !h) return null;
+  const actual = w / h;
+  if (Math.abs(actual / limits.ratio - 1) > 0.03) {
+    return '图片比例不符，需 ' + (limits.ratioLabel || '') + '（当前 ' + w + '×' + h + '）';
+  }
+  return null;
+}
+function readImageFile(file, maxMB, limits) {
+  return new Promise(function (resolve, reject) {
+    if (!/^image\//.test(file.type)) return reject('请选择图片文件（JPG / PNG / WebP / GIF）');
+    if (limits && limits.types && limits.types.indexOf(file.type) < 0) return reject('仅支持 ' + (limits.typeLabel || '指定格式'));
+    if (file.size > maxMB * 1024 * 1024) return reject('图片超过 ' + maxMB + 'MB 上限（当前 ' + fmtSize(file.size) + '）');
+    const img = new Image();
+    img.onload = function () {
+      const ratioErr = checkRatio(img.naturalWidth, img.naturalHeight, limits);
+      if (ratioErr) return reject(ratioErr);
+      const reader = new FileReader();
+      reader.onload = function () { resolve({ src: reader.result, video: false, name: file.name, size: file.size }); };
+      reader.onerror = function () { reject('图片读取失败'); };
+      reader.readAsDataURL(file);
+    };
+    img.onerror = function () { reject('图片解析失败'); };
+    img.src = URL.createObjectURL(file);
+  });
+}
+function readVideoFile(file, maxMB, limits) {
+  return new Promise(function (resolve, reject) {
+    if (file.type !== 'video/mp4') return reject('视频仅支持 MP4');
+    if (file.size > maxMB * 1024 * 1024) return reject('视频超过 ' + maxMB + 'MB 上限（当前 ' + fmtSize(file.size) + '）');
+    const url = URL.createObjectURL(file);
+    const v = document.createElement('video');
+    v.preload = 'metadata';
+    v.onloadedmetadata = function () {
+      if (v.duration && v.duration > 10.2) { URL.revokeObjectURL(url); return reject('视频时长需 ≤ 10 秒（当前 ' + v.duration.toFixed(1) + ' 秒）'); }
+      const ratioErr = checkRatio(v.videoWidth, v.videoHeight, limits);
+      if (ratioErr) { URL.revokeObjectURL(url); return reject(ratioErr); }
+      resolve({ src: url, video: true, name: file.name, size: file.size });
+    };
+    v.onerror = function () { URL.revokeObjectURL(url); reject('视频读取失败'); };
+    v.src = url;
+  });
+}
+function handleUpload(file, limits) {
+  if (!file) return Promise.reject('');
+  const isGif = file.type === 'image/gif';
+  if (file.type === 'video/mp4') return readVideoFile(file, limits.videoMax || 20, limits);
+  if (isGif) return readImageFile(file, limits.gifMax || 5, limits);
+  return readImageFile(file, limits.imgMax || 2, limits);
+}
+function renderUploadPreview(target) {
+  const modal = UI.modal; if (!modal) return;
+  const box = $('#up-' + target + '-preview');
+  if (!box) return;
+  const media = modal['upload_' + target];
+  box.innerHTML = media
+    ? (media.video
+      ? '<video src="' + esc(media.src) + '" muted loop autoplay playsinline></video><span class="up-badge">视频预览</span>'
+      : '<img src="' + esc(media.src) + '" alt=""><span class="up-badge">图片预览</span>')
+    : ({ c34: '点击上传<br>3:4 竖版', c11: '点击上传<br>1:1 方形', introBg: '点击上传<br>5:4 横版', recBg: '点击上传<br>5:4 横版', bg: '点击上传<br>3:2 横版', icon: '点击上传<br>图标 PNG/SVG', wnCover: '点击上传<br>白噪音封面', legacyCover: '点击上传<br>封面图', chapterCover: '点击上传<br>小课封面', chapterCover11: '点击上传<br>1:1 封面' }[target] || '点击上传');
+}
+function bindUploadInput(target, limits, onDone) {
+  const input = $('#up-' + target + '-input');
+  if (!input) return;
+  input.addEventListener('change', function () {
+    const file = input.files && input.files[0];
+    input.value = '';
+    if (!file) return;
+    handleUpload(file, limits).then(function (res) {
+      UI.modal['upload_' + target] = res;
+      UI.modal['upload_' + target] = res;
+      renderUploadPreview(target);
+      const nameEl = $('#up-' + target + '-name');
+      if (nameEl) nameEl.textContent = res.name + ' · ' + fmtSize(res.size) + (res.video ? ' · 视频' : '');
+      if (onDone) onDone(res);
+      toast('已选择：' + res.name, 'info');
+    }).catch(function (err) {
+      if (err) toast(err, 'error');
+    });
+  });
+}
+
+/* =========================================================
+   内容配置：添加 / 编辑弹窗
+   ========================================================= */
+function deepCopyContent(item) {
+  return JSON.parse(JSON.stringify(item));
+}
+function emptyContent() {
+  const idx = (CONTENT.length % LEGACY_TYPES.length);
+  return {
+    id: null, name: '', type: '深睡眠脑波', sub: '深度睡眠', kind: 'single', cover34: null, cover11: null, introBg: null, recBg: null,
+    introTitle: '', introBody: '', effectMain: '提升深睡', permission: 'VIP', status: 'on',
+    newDate: '', sort: 0, sku: '', audioUrl: '', audioDuration: '', trialDuration: '', color: '',
+    seriesItems: [], topFeatured: false, homeFeatured: false,
+    legacyDesc: '', legacyCover: null, legacyType: LEGACY_TYPES[idx % LEGACY_TYPES.length], legacySub: (LEGACY_SUBTYPES[LEGACY_TYPES[idx % LEGACY_TYPES.length]] || [])[0] || '', isFree: false, isNew: false,
+    memberPlan: '无', legacyStatus: '已上架', newEnd: '', chapters: [], refTracks: [], wnCover: null, icon: null, featuredSort: 0, homeFeaturedSort: 0
+  };
+}
+function radio(name, value, current, disabled) {
+  return '<label><input type="radio" name="' + name + '" value="' + esc(value) + '"' +
+    (value === current ? ' checked' : '') + (disabled ? ' disabled' : '') + '>' + esc(value) + '</label>';
+}
+function optionList(arr, current) {
+  return arr.map(function (v) { return '<option value="' + esc(v) + '"' + (v === current ? ' selected' : '') + '>' + esc(v) + '</option>'; }).join('');
+}
+function tagChip(text, cls) { return '<span class="tag ' + cls + '">' + esc(text) + '</span>'; }
+
+/* ---------- 音频卡片预览 / 介绍页标签预览（实时） ---------- */
+function updateAudioCardPreview() {
+  if (!UI.modal || UI.modal.type !== 'content') return;
+  const data = UI.modal.data;
+  const coverEl = $('#acp-cover');
+  if (!coverEl) return;
+  const media = UI.modal.upload_c11 || mediaOf(data.cover11) || UI.modal.upload_c34 || mediaOf(data.cover34);
+  if (media && media.src) {
+    coverEl.classList.remove('is-empty');
+    coverEl.innerHTML = media.video
+      ? '<video src="' + esc(media.src) + '" muted loop autoplay playsinline></video>'
+      : '<img src="' + esc(media.src) + '" alt="">';
+  } else {
+    coverEl.classList.add('is-empty');
+    coverEl.innerHTML = '<span>封面待上传</span>';
+  }
+  const name = (($('#m-name') || {}).value || data.name || '').trim();
+  $('#acp-name').textContent = name || '未命名内容';
+  const type = (($('#modal input[name="m-legacy-type"]:checked') || {}).value) || data.legacyType || '';
+  const sub = (($('#modal input[name="m-legacy-sub"]:checked') || {}).value) || data.legacySub || '';
+  const main = ($('#m-effect-main') || {}).value || '';
+  let tags = '';
+  if (type) tags += tagChip(type, 'tag-dark');
+  if (sub) tags += tagChip(sub, 'tag-gray');
+  $('#acp-tags').innerHTML = tags;
+  const effect = $('#acp-effect');
+  if (effect) effect.innerHTML = '功效：<b>' + esc(main || '未选择') + '</b>';
+}
+function introTagList() {
+  const permission = (($('#modal input[name="m-permission"]:checked') || {}).value) || '';
+  const isSeries = !!(UI.modal && UI.modal.data && UI.modal.data.kind === 'series');
+  const sub = isSeries ? '' : ((($('#modal input[name="m-legacy-sub"]:checked') || {}).value) || '');
+  const main = ($('#m-effect-main') || {}).value || '';
+  const tags = [];
+  if (permission && permission !== '免费') tags.push({ text: permission, cls: 'tag-blue' });
+  if (sub) tags.push({ text: sub, cls: 'tag-gray' });
+  if (main) tags.push({ text: main, cls: 'tag-teal' });
+  if (isSeries) tags.push({ text: '系列课', cls: 'tag-gray' });
+  return tags.slice(0, 4);
+}
+function updateIntroTagPreview() {
+  const box = $('#intro-tag-preview');
+  if (!box) return;
+  const tags = introTagList();
+  box.innerHTML = tags.length ? tags.map(function (t) { return tagChip(t.text, t.cls); }).join('') : '<span class="muted">暂无可生成标签</span>';
+  const perm = (($('#modal input[name="m-permission"]:checked') || {}).value) || '';
+  const note = $('#itp-note');
+  const isSeries = !!(UI.modal && UI.modal.data && UI.modal.data.kind === 'series');
+  const rule = isSeries ? '收听权限 + 功效 + 系列课' : '收听权限 + 小分类 + 功效';
+  if (note) note.textContent = (perm === '免费' ? '免费内容不展示权限标签；' : '') + '由' + rule + '自动生成，不可手填；最多展示 4 个，顺序固定。';
+}
+function updateFeaturedMap() {
+  const box = $('#m-featured-map');
+  if (!box) return;
+  const type = (($('#modal input[name="m-legacy-type"]:checked') || {}).value) || '';
+  const yes = (($('#modal input[name="m-featured"]:checked') || {}).value) === '是';
+  const slot = FEATURED_SLOT[type] || '';
+  if (!type) { box.textContent = '选择课程类型后自动显示归属精选位。'; return; }
+  if (!slot) { box.innerHTML = '该课程类型无类型精选（仅可设置是否推荐页精选）。'; return; }
+  box.innerHTML = yes
+    ? '当前归属：<b>' + esc(type) + '</b> → ' + esc(slot) + '（开启后进入' + esc(slot) + '）'
+    : '是否精选 = 否：不进入精选；该课程类型归属为 ' + esc(slot) + '。';
+}
+function updateContentPreviews() { updateAudioCardPreview(); updateIntroTagPreview(); updateFeaturedMap(); }
+
+/* ---------- 系列课内容模块 ---------- */
+function setFieldError(field, on) { const el = $('[data-field="' + field + '"]'); if (el) el.classList.toggle('has-error', !!on); }
+function contentModalHTML(data, mode) {
+  const ro = mode === 'view';
+  const dis = ro ? ' disabled' : '';
+  const isSeries = data.kind === 'series';
+  const title = (mode === 'add' ? '添加内容' : mode === 'edit' ? '编辑内容' : '查看内容');
+  const radioHtml = function (name, val, cur, label) { return radio(name, val, cur, ro) + '<span style="margin-right:14px"></span>'; };
+  return {
+    title: title, wide: true,
+    body:
+      '<div class="branch-tip" id="m-branch-tip"></div>' +
+      /* 旧字段：基础信息 */
+      '<div class="form-section"><div class="section-head"><span class="sec-bar"></span>基础信息（旧字段）<span class="sec-tip">现有后台字段，全部保留</span></div>' +
+        '<div class="fgrid single-col">' +
+          '<div class="fitem"><div class="label">课程ID</div><input type="text" value="' + (data.id == null ? '保存后自动生成' : data.id) + '" disabled></div>' +
+          '<div class="fitem" data-field="name"><div class="label"><span class="req">*</span>课程名称</div><input type="text" id="m-name" maxlength="30" value="' + esc(data.name) + '"' + dis + '><div class="err-msg">请输入 2–30 个字符的课程名称</div></div>' +
+          '<div class="fitem full"><div class="label">课程描述</div><textarea id="m-legacy-desc" rows="3" placeholder="旧字段：课程描述"' + dis + '>' + esc(data.legacyDesc || '') + '</textarea></div>' +
+          '<div class="fitem full"><div class="label"><span class="req">*</span>课程分类</div><div class="radio-row" id="m-kind-row">' + radioHtml('m-kind', '单课', isSeries ? '系列课' : '单课', '单课') + radioHtml('m-kind', '系列课', isSeries ? '系列课' : '单课', '系列课') + '</div><div class="hint">系列课保存后在列表点「查看」进入系列课内容配置添加小课</div></div>' +
+          '<div class="fitem full"><div class="label"><span class="req">*</span>课程类型</div><div class="radio-row" id="m-legacy-type-row">' + LEGACY_TYPES.map(function (t) { return radio('m-legacy-type', t, data.legacyType, ro); }).join('') + '</div></div>' +
+          '<div class="fitem full" id="m-legacy-sub-item" data-field="legacySub"><div class="label"><span class="req">*</span>小分类</div><div class="radio-row" id="m-legacy-sub-row">' + (LEGACY_SUBTYPES[data.legacyType] || []).map(function (x) { return radio('m-legacy-sub', x, data.legacySub, ro); }).join('') + '</div><div class="err-msg">请选择小分类</div></div>' +
+          '<div class="fitem" data-field="effectMain"><div class="label"><span class="req">*</span>主功效</div><select id="m-effect-main"' + dis + '>' + optionList(EFFECTS, data.effectMain) + '</select><div class="err-msg">请选择主功效</div></div>' +
+          '<div class="fitem" id="m-featured-item"><div class="label"><span class="req">*</span>是否精选</div><div class="radio-row">' + radio('m-featured', '是', data.topFeatured ? '是' : '否', ro) + radio('m-featured', '否', data.topFeatured ? '是' : '否', ro) + '</div><div class="hint" id="m-featured-map"></div></div>' +
+          '<div class="fitem" id="m-home-featured-item"><div class="label"><span class="req">*</span>是否推荐页精选</div><div class="radio-row">' + radio('m-home-featured', '是', data.homeFeatured ? '是' : '否', ro) + radio('m-home-featured', '否', data.homeFeatured ? '是' : '否', ro) + '</div></div>' +
+          '<div class="fitem" data-field="permission"><div class="label"><span class="req">*</span>内容权限</div><div class="radio-row" id="m-permission-row">' + PERMISSIONS.map(function (x) { return radio('m-permission', x, data.permission, ro); }).join('') + '</div></div>' +
+          '<div class="fitem"><div class="label"><span class="req">*</span>是否上新</div><div class="radio-row">' + radioHtml('m-isnew', '是', data.isNew ? '是' : '否', '是') + radioHtml('m-isnew', '否', data.isNew ? '是' : '否', '否') + '</div></div>' +
+          '<div class="fitem full"><div class="label">会员计划</div><div class="radio-row">' + ['有', '无'].map(function (x) { return radio('m-member-plan', x, data.memberPlan === '有' ? '有' : '无', ro); }).join('') + '</div></div>' +
+          '<div class="fitem full"><div class="label"><span class="req">*</span>课程状态</div><div class="radio-row">' + ['已上架', '已下架', '草稿'].map(function (x) { return radio('m-legacy-status', x, data.legacyStatus || '已上架', ro); }).join('') + '</div></div>' +
+          '<div class="fitem"><div class="label">上新结束时间</div><input type="date" id="m-new-end" value="' + esc(data.newEnd || '') + '"' + dis + '></div>' +
+          '<div class="fitem"><div class="label">sku_id</div><input type="text" id="m-sku" value="' + esc(data.sku || '') + '"' + dis + '></div>' +
+          '<div class="fitem"><div class="label">类型排序</div><input type="number" id="m-sort" value="' + (data.sort == null ? 0 : data.sort) + '"' + dis + '><div class="hint">数字越小越靠前</div></div>' +
+          '<div class="fitem" id="m-featured-sort-item" style="display:none"><div class="label">精选排序</div><input type="number" id="m-featured-sort" value="' + (data.featuredSort == null ? 0 : data.featuredSort) + '"' + dis + '><div class="hint">数字越小越靠前</div></div>' +
+          '<div class="fitem" id="m-home-sort-item" style="display:none"><div class="label">首页精选排序</div><input type="number" id="m-home-featured-sort" value="' + (data.homeFeaturedSort == null ? 0 : data.homeFeaturedSort) + '"' + dis + '><div class="hint">数字越小越靠前</div></div>' +
+        '</div></div>' +
+      /* 旧字段：媒体文件（单课） */
+      '<div class="form-section" id="m-media-section"><div class="section-head"><span class="sec-bar"></span>媒体文件（旧字段）<span class="sec-tip">单课：一条音视频；系列课在章节页配置小课</span></div>' +
+        '<div class="fgrid">' +
+          '<div class="fitem" data-field="audio"><div class="label"><span class="req">*</span>音视频地址</div><div style="display:flex;gap:8px"><input type="text" id="m-audio" value="' + esc(data.audioUrl || '') + '" placeholder="https://… .mp3 / .mp4"' + dis + '><button class="btn sm primary" data-act="pick-audio"' + (ro ? ' disabled' : '') + '>上传</button><input type="file" id="up-audio-input" accept="audio/*,video/mp4" hidden></div><div class="hint">支持 mp3 / mp4，上传后回填链接</div><div class="err-msg">请填写音视频地址</div></div>' +
+          '<div class="fitem"><div class="label">音视频时长</div><input type="text" id="m-duration" value="' + esc(data.audioDuration || '') + '" placeholder="如 12:30"' + dis + '></div>' +
+          '<div class="fitem"><div class="label">试听时长</div><input type="text" id="m-trial" value="' + esc(data.trialDuration || '') + '" placeholder="如 03:00"' + dis + '></div>' +
+        '</div></div>' +
+      /* 追加新字段：多比例封面 + 白噪音素材 */
+      '<div class="form-section" id="m-cover-section"><div class="section-head"><span class="sec-bar"></span>多比例封面（新增字段）<span class="sec-tip" id="m-cover-tip">单曲：3:4/1:1/介绍页背景必填，今日推荐背景选填</span></div>' +
+        '<div class="fgrid">' +
+          '<div class="fitem" id="m-c34-item" data-field="cover34"><div class="label"><span class="req">*</span>列表封面（3:4）</div><div class="upload-box"><div class="up-preview cover34" id="up-c34-preview"></div><div class="up-meta"><div>建议 900×1200</div><div class="up-actions"><button class="btn sm primary" data-act="pick-upload" data-target="c34"' + (ro ? ' disabled' : '') + '>选择文件</button><button class="btn sm" data-act="clear-upload" data-target="c34"' + (ro ? ' disabled' : '') + '>清除</button></div><div class="up-name" id="up-c34-name"></div></div><input type="file" id="up-c34-input" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4" hidden></div><div class="err-msg">请上传 3:4 列表封面</div></div>' +
+          '<div class="fitem" id="m-c11-item" data-field="cover11"><div class="label"><span class="req">*</span>列表封面（1:1）</div><div class="upload-box"><div class="up-preview" id="up-c11-preview"></div><div class="up-meta"><div>建议 1080×1080</div><div class="up-actions"><button class="btn sm primary" data-act="pick-upload" data-target="c11"' + (ro ? ' disabled' : '') + '>选择文件</button><button class="btn sm" data-act="clear-upload" data-target="c11"' + (ro ? ' disabled' : '') + '>清除</button></div><div class="up-name" id="up-c11-name"></div></div><input type="file" id="up-c11-input" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4" hidden></div><div class="err-msg">请上传 1:1 列表封面</div></div>' +
+          '<div class="fitem" id="m-introBg-item" data-field="introBg"><div class="label"><span class="req">*</span>介绍页背景（5:4）</div><div class="upload-box"><div class="up-preview ratio54" id="up-introBg-preview"></div><div class="up-meta"><div>建议 1440×1152</div><div class="up-actions"><button class="btn sm primary" data-act="pick-upload" data-target="introBg"' + (ro ? ' disabled' : '') + '>选择文件</button><button class="btn sm" data-act="clear-upload" data-target="introBg"' + (ro ? ' disabled' : '') + '>清除</button></div><div class="up-name" id="up-introBg-name"></div></div><input type="file" id="up-introBg-input" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4" hidden></div><div class="err-msg">请上传介绍页背景</div></div>' +
+          '<div class="fitem" id="m-recBg-item"><div class="label">今日推荐背景（5:4）</div><div class="upload-box"><div class="up-preview ratio54" id="up-recBg-preview"></div><div class="up-meta"><div>选填，建议 1440×1152</div><div class="up-actions"><button class="btn sm primary" data-act="pick-upload" data-target="recBg"' + (ro ? ' disabled' : '') + '>选择文件</button><button class="btn sm" data-act="clear-upload" data-target="recBg"' + (ro ? ' disabled' : '') + '>清除</button></div><div class="up-name" id="up-recBg-name"></div></div><input type="file" id="up-recBg-input" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4" hidden></div></div>' +
+          '<div class="fitem" id="m-icon-item" data-field="icon"><div class="label"><span class="req">*</span>白噪音图标</div><div class="upload-box"><div class="up-preview" id="up-icon-preview"></div><div class="up-meta"><div>普通白噪音必填，PNG/SVG，200×200，≤300KB</div><div class="up-actions"><button class="btn sm primary" data-act="pick-upload" data-target="icon"' + (ro ? ' disabled' : '') + '>选择文件</button><button class="btn sm" data-act="clear-upload" data-target="icon"' + (ro ? ' disabled' : '') + '>清除</button></div><div class="up-name" id="up-icon-name"></div></div><input type="file" id="up-icon-input" accept="image/png,image/svg+xml" hidden></div><div class="err-msg">请上传白噪音图标</div></div>' +
+          '<div class="fitem" id="m-color-item" data-field="color"><div class="label"><span class="req">*</span>白噪音色值</div><input type="text" id="m-color" value="' + esc(data.color || '') + '" placeholder="#RRGGBB"' + dis + '><div class="err-msg">请填写 #RRGGBB 色值</div></div>' +
+          '<div class="fitem" id="m-wnCover-item" data-field="wnCover"><div class="label"><span class="req">*</span>白噪音封面</div><div class="upload-box"><div class="up-preview" id="up-wnCover-preview"></div><div class="up-meta"><div>是否精选=是时必填，不限比例，静态≤2MB/GIF≤5MB</div><div class="up-actions"><button class="btn sm primary" data-act="pick-upload" data-target="wnCover"' + (ro ? ' disabled' : '') + '>选择文件</button><button class="btn sm" data-act="clear-upload" data-target="wnCover"' + (ro ? ' disabled' : '') + '>清除</button></div><div class="up-name" id="up-wnCover-name"></div></div><input type="file" id="up-wnCover-input" accept="image/jpeg,image/png,image/webp,image/gif" hidden></div><div class="err-msg">请上传白噪音封面</div></div>' +
+        '</div></div>' +
+      /* 追加新字段：白噪音音频列表 */
+      '<div id="m-refaudio-wrap" style="display:none"><div class="form-section"><div class="section-head"><span class="sec-bar"></span>白噪音音频（新增字段，2–7 条）<span class="sec-tip">是否精选=是时必填；引用已启用的白噪音单曲</span></div>' +
+        '<div id="m-ref-track-list"></div>' +
+        '<div style="margin-top:10px;display:flex;align-items:center;gap:10px"><button class="btn sm primary" data-act="ref-add"' + (ro ? ' disabled' : '') + '>＋ 添加一条</button><span class="muted" style="font-size:11.5px" id="m-ref-count">共 2 条</span></div>' +
+        '<div class="hint">至少 2 条、最多 7 条；同一音频不可重复配置为白噪音精选。</div><div class="series-err" id="m-ref-errors"></div></div></div>' +
+      /* 追加新字段：介绍页内容 */
+      '<div class="form-section" id="m-intro-section"><div class="section-head"><span class="sec-bar"></span>介绍页内容（新增字段）<span class="sec-tip">白噪音不展示介绍页；旧课程描述保留在基础信息中</span></div>' +
+        '<div class="tag-layout"><div class="fgrid">' +
+          '<div class="fitem full"><div class="label">介绍页标题</div><input type="text" id="m-intro-title" maxlength="30" value="' + esc(data.introTitle || '') + '"' + dis + '></div>' +
+          '<div class="fitem full"><div class="label">介绍页正文</div><textarea id="m-intro-body" rows="3"' + dis + '>' + esc(data.introBody || '') + '</textarea><div class="counter"><span id="m-body-count">' + (data.introBody || '').replace(/\s/g, '').length + '</span> / 1000</div></div>' +
+        '</div><div class="intro-tag-preview"><div class="itp-title"><span class="tag tag-teal" style="height:18px">自动</span>介绍页标签预览</div><div class="chips" id="intro-tag-preview"></div><div class="itp-note" id="itp-note">由收听权限 + 细分 + 功效自动生成，不可手填</div></div></div></div>' +
+      (isSeries ? '<div class="hint" style="padding:0 22px 18px;color:#8a94a3">提示：保存系列课头部字段后，回到列表点「查看」进入系列课内容配置，添加小课音频。</div>' : ''),
+    footer: ro ? '<button class="btn" data-act="modal-close">关闭</button>' : '<button class="btn" data-act="modal-close">取消</button><button class="btn primary" data-act="content-save">保存</button>'
+  };
+}
+function refTrackRowsHTML() {
+  const m = UI.modal.data; const errs = UI.modal.refTrackErrors || []; const tracks = m.refTracks || [];
+  let rows = '';
+  tracks.forEach(function (t, i) {
+    const c = findContent(t.contentId);
+    rows += '<tr data-ref-row="' + i + '" class="' + (errs[i] ? 'row-error' : '') + '"><td class="col-center">' + (i + 1) + '</td>' +
+      '<td><input type="text" data-ref="' + i + '" value="' + esc(t.contentId == null ? '' : String(t.contentId)) + '" placeholder="如 526"></td>' +
+      '<td><input type="text" class="ref-name-input" id="ref-name-' + i + '" value="' + esc(c ? c.name : (t.name || '')) + '" readonly></td>' +
+      '<td><input type="text" class="ref-dur-input" id="ref-dur-' + i + '" value="' + esc(c ? (c.audioDuration || '') : (t.duration || '')) + '" readonly></td>' +
+      '<td class="col-center nowrap"><button class="icon-btn" data-act="ref-up" data-i="' + i + '">↑</button><button class="icon-btn" data-act="ref-down" data-i="' + i + '">↓</button><button class="icon-btn" data-act="ref-del" data-i="' + i + '">×</button></td></tr>';
+  });
+  return '<div class="series-wrap"><table class="series-table"><colgroup><col style="width:44px"><col style="width:150px"><col style="width:190px"><col style="width:120px"><col style="width:100px"></colgroup><thead><tr><th class="col-center">序号</th><th>白噪音音频 ID</th><th>音频名称</th><th>音频时长</th><th class="col-center">操作</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+}
+function renderRefTracks() {
+  const box = $('#m-ref-track-list'); if (!box || !UI.modal) return;
+  box.innerHTML = refTrackRowsHTML();
+  const cnt = $('#m-ref-count'); if (cnt) cnt.textContent = '共 ' + ((UI.modal.data.refTracks || []).length) + ' 条';
+  const errBox = $('#m-ref-errors');
+  if (errBox) {
+    const extra = UI.modal.refTrackMsg || '';
+    const errs = UI.modal.refTrackErrors || [];
+    const msg = [extra].concat(errs.map(function (e, i) { return e ? '第 ' + (i + 1) + ' 条：' + e : ''; })).filter(Boolean).join('；');
+    errBox.textContent = msg; errBox.classList.toggle('show', !!msg);
+  }
+  if (UI.modal.mode === 'view') $$('#m-ref-track-list input, #m-ref-track-list button').forEach(function (el) { el.disabled = true; });
+}
+function addRefTrack() { const m = UI.modal.data; if (!m.refTracks) m.refTracks = []; if (m.refTracks.length >= 7) { toast('最多 7 条音频', 'error'); return; } m.refTracks.push({ contentId: '', name: '', duration: '' }); UI.modal.refTrackErrors = []; UI.modal.refTrackMsg = ''; renderRefTracks(); }
+function delRefTrack(i) { UI.modal.data.refTracks.splice(i, 1); UI.modal.refTrackErrors = []; UI.modal.refTrackMsg = ''; renderRefTracks(); }
+function moveRefTrack(i, dir) { const tr = UI.modal.data.refTracks; const j = i + dir; if (j < 0 || j >= tr.length) return; const t = tr[i]; tr[i] = tr[j]; tr[j] = t; UI.modal.refTrackErrors = []; renderRefTracks(); }
+function openContentModal(id, mode, kindArg, chapterCtx) {
+  let item;
+  if (id == null) { item = emptyContent(); if (kindArg) item.kind = kindArg; }
+  else { item = deepCopyContent(CONTENT.find(function (c) { return c.id === id; }) || emptyContent()); }
+  if (!item.refTracks) item.refTracks = [];
+  if (!item.chapters) item.chapters = [];
+  if (chapterCtx && chapterCtx.chapter) {
+    const ch = chapterCtx.chapter;
+    item = emptyContent();
+    item.kind = 'single';
+    item.name = ch.name; item.audioUrl = ch.audioUrl; item.audioDuration = ch.audioDuration || '';
+    item.legacyDesc = ch.legacyDesc || ''; item.legacyType = ch.legacyType || item.legacyType;
+    item.legacyCover = ch.cover; item.isFree = ch.isFree !== '付费'; item.legacyStatus = '已上架';
+    item.sort = ch.sort || 0;
+  }
+  const view = mode === 'view';
+  const opts = contentModalHTML(item, mode);
+  openModal({ title: chapterCtx ? ((mode === 'add' || !chapterCtx.chapter) ? '添加小课' : '编辑小课') : opts.title, wide: true, body: opts.body, footer: opts.footer,
+    ctx: { type: 'content', mode: mode, id: id, data: item, branchTitleBase: opts.title, chapterCtx: chapterCtx || null,
+      upload_c34: mediaOf(item.cover34), upload_c11: mediaOf(item.cover11), upload_introBg: mediaOf(item.introBg), upload_recBg: mediaOf(item.recBg),
+      upload_icon: mediaOf(item.icon), upload_wnCover: mediaOf(item.wnCover), refTrackErrors: [] },
+    onMount: function () { mountContentModal(item, mode, view, chapterCtx); } });
+}
+function mountContentModal(item, mode, view, chapterCtx) {
+  ['c34', 'c11', 'introBg', 'recBg', 'icon', 'wnCover'].forEach(function (t) { renderUploadPreview(t); });
+  bindUploadInput('c34', UPLOAD_LIMIT.c34); bindUploadInput('c11', UPLOAD_LIMIT.c11);
+  bindUploadInput('introBg', UPLOAD_LIMIT.introBg); bindUploadInput('recBg', UPLOAD_LIMIT.recBg);
+  bindUploadInput('icon', UPLOAD_LIMIT.icon); bindUploadInput('wnCover', UPLOAD_LIMIT.wnCover);
+  renderRefTracks();
+  syncContentBranch();
+  if (view) $$('#modal input, #modal select, #modal textarea, #modal button:not([data-act="modal-close"])').forEach(function (el) { el.disabled = true; });
+  const body = $('#m-intro-body');
+  if (body) body.addEventListener('input', function () { const c = $('#m-body-count'); if (c) c.textContent = body.value.replace(/\s/g, '').length; });
+  const audioInput = $('#up-audio-input');
+  if (audioInput) audioInput.addEventListener('change', function () {
+    const f = audioInput.files && audioInput.files[0]; audioInput.value = '';
+    if (!f) return; toast('音频已上传（原型模拟）', 'info');
+  });
+  $$('#modal input[name="m-kind"]').forEach(function (r) { r.addEventListener('change', function () { UI.modal.data.kind = r.value === '系列课' ? 'series' : 'single'; syncContentBranch(); updateIntroTagPreview(); }); });
+  const contentModalEl = $('#modal');
+  if (contentModalEl) contentModalEl.addEventListener('change', function (e) {
+    const t = e.target;
+    if (!t || !t.name) return;
+    if (t.name === 'm-legacy-type') {
+      const subs = LEGACY_SUBTYPES[t.value] || [];
+      const row = $('#m-legacy-sub-row');
+      if (row) row.innerHTML = subs.map(function (x) { return radio('m-legacy-sub', x, subs[0], false); }).join('');
+      const subItem = $('#m-legacy-sub-item');
+      if (subItem) subItem.style.display = subs.length ? '' : 'none';
+      UI.modal.data.legacyType = t.value;
+      UI.modal.data.legacySub = subs[0] || '';
+      syncContentBranch(); updateIntroTagPreview();
+    } else if (t.name === 'm-legacy-sub') {
+      UI.modal.data.legacySub = t.value;
+      syncContentBranch(); updateIntroTagPreview();
+    } else if (t.name === 'm-featured') {
+      UI.modal.data.topFeatured = t.value === '是';
+      syncContentBranch(); updateIntroTagPreview();
+    } else if (t.name === 'm-home-featured') {
+      UI.modal.data.homeFeatured = t.value === '是';
+      syncContentBranch(); updateIntroTagPreview();
+    }
+  });
+  const modalEl = $('#modal');
+  modalEl.oninput = function () { updateIntroTagPreview(); };
+  modalEl.onchange = function () { updateIntroTagPreview(); };
+}
+function syncContentBranch() {
+  if (!UI.modal) return;
+  const kind = (($('#modal input[name="m-kind"]:checked') || {}).value) || '单课';
+  const isSeries = kind === '系列课';
+  const type = (($('#modal input[name="m-legacy-type"]:checked') || {}).value) || '';
+  const subs = LEGACY_SUBTYPES[type] || [];
+  const sub = (($('#modal input[name="m-legacy-sub"]:checked') || {}).value) || '';
+  const isWhite = !isSeries && type === '白噪音';
+  const featuredYes = (($('#modal input[name="m-featured"]:checked') || {}).value) === '是';
+  const isFeaturedWhite = isWhite && featuredYes;
+  const subItem = $('#m-legacy-sub-item');
+  if (subItem) subItem.style.display = subs.length ? '' : 'none';
+  const show = function (sel, on) { const el = $(sel); if (el) el.style.display = on ? '' : 'none'; };
+  UI.modal.data.kind = isSeries ? 'series' : 'single';
+  UI.modal.data.legacyType = type;
+  UI.modal.data.legacySub = sub;
+  show('#m-media-section', !isSeries);
+  show('#m-refaudio-wrap', isFeaturedWhite);
+  show('#m-wnCover-item', isFeaturedWhite);
+  show('#m-icon-item', isWhite);
+  show('#m-color-item', isWhite);
+  show('#m-c34-item', isSeries || !isWhite);
+  show('#m-c11-item', isSeries || !isWhite);
+  show('#m-introBg-item', isSeries || !isWhite);
+  show('#m-recBg-item', !isSeries && !isWhite);
+  show('#m-intro-section', !isWhite);
+  const featureAllowed = !isSeries && !!FEATURED_SLOT[type];
+  if (!featureAllowed) {
+    const noEl = $('#modal input[name="m-featured"][value="否"]');
+    if (noEl) noEl.checked = true;
+    UI.modal.data.topFeatured = false;
+  }
+  show('#m-featured-item', featureAllowed);
+  show('#m-home-featured-item', true);
+  show('#m-featured-sort-item', featureAllowed && (($('#modal input[name="m-featured"]:checked') || {}).value) === '是');
+  show('#m-home-sort-item', (($('#modal input[name="m-home-featured"]:checked') || {}).value) === '是');
+  const tip = $('#m-cover-tip');
+  if (tip) tip.textContent = isSeries ? '系列课：3:4 / 1:1 / 介绍页背景必填' : (isFeaturedWhite ? '白噪音（是否精选=是）：白噪音封面 + 白噪音音频 ID 列表' : (isWhite ? '白噪音（是否精选=否）：白噪音图标 + 白噪音色值' : '单曲：3:4 / 1:1 / 介绍页背景必填，今日推荐背景选填'));
+  if (isFeaturedWhite) {
+    if (!UI.modal.data.refTracks || !UI.modal.data.refTracks.length) UI.modal.data.refTracks = [{ contentId: '', name: '', duration: '' }, { contentId: '', name: '', duration: '' }];
+    renderRefTracks();
+  }
+  // 分支层级展示：系列课 > 白噪音 > 普通单课
+  let label, shortLabel, desc;
+  if (isSeries) {
+    label = '系列课分支'; shortLabel = '系列课';
+    desc = '课程分类=系列课：先保存系列课头部字段，列表点「查看」进入系列课内音频配置添加小课；系列课不配置音频地址/白噪音素材。';
+  } else if (isWhite) {
+    shortLabel = '白噪音';
+    if (isFeaturedWhite) {
+      label = '白噪音分支 · 精选混音';
+      desc = '课程类型=白噪音、是否精选=是：2–7 条白噪音音频 ID（自动带名称/时长）+ 白噪音封面（不限比例），归属精选混音；同时保留旧音频地址、图标、色值；不显示新增介绍页模块。';
+    } else {
+      label = '白噪音分支 · 普通白噪音';
+      desc = '课程类型=白噪音、是否精选=否：旧音频地址 + 白噪音图标 + 白噪音色值；不显示新增介绍页模块。';
+    }
+  } else {
+    label = '普通单课分支'; shortLabel = '普通单课';
+    desc = '普通单课：旧音频地址 + 新封面 + 介绍页 + 内容权限 + 精选；无白噪音素材。';
+  }
+  const tipEl = $('#m-branch-tip');
+  if (tipEl) tipEl.innerHTML = '<b>当前分支：' + esc(label) + '</b><span>' + esc(desc) + '</span>';
+  const titleEl = $('.modal-title');
+  if (titleEl) titleEl.textContent = (UI.modal.branchTitleBase || '内容') + ' · ' + label;
+  updateFeaturedMap();
+  updateIntroTagPreview();
+}
+function audioInputValue() { return ($('#m-audio') || {}).value || ''; }
+function collectAndSaveContent() {
+  const modal = UI.modal; if (!modal || modal.mode === 'view') return;
+  const kind = (($('#modal input[name="m-kind"]:checked') || {}).value) === '系列课' ? 'series' : 'single';
+  const isSeries = kind === 'series';
+  const name = ($('#m-name').value || '').trim();
+  const legacyType = (($('#modal input[name="m-legacy-type"]:checked') || {}).value) || '';
+  const legacySub = (($('#modal input[name="m-legacy-sub"]:checked') || {}).value) || '';
+  const type = legacyType, sub = legacySub;
+  const effectMain = ($('#m-effect-main') || {}).value || '';
+  const isWhite = !isSeries && legacyType === '白噪音';
+  const featuredYes = (($('#modal input[name="m-featured"]:checked') || {}).value) === '是';
+  const isFeaturedWhite = isWhite && featuredYes;
+  const permission = (($('#modal input[name="m-permission"]:checked') || {}).value) || '免费';
+  const isFree = (modal.id != null) ? !!modal.data.isFree : (permission === '免费');
+  const homeYes = (($('#modal input[name="m-home-featured"]:checked') || {}).value) === '是';
+  const isNew = (($('#modal input[name="m-isnew"]:checked') || {}).value) === '是';
+  const homeFeatured = homeYes;
+  const topFeatured = (!isSeries && !!FEATURED_SLOT[legacyType]) ? featuredYes : false;
+  const refTracks = (modal.data.refTracks || []).map(function (t) { return { contentId: String(t.contentId || '').trim(), name: t.name || '', duration: t.duration || '' }; });
+  const uploadedC34 = modal.upload_c34, uploadedC11 = modal.upload_c11, uploadedIntroBg = modal.upload_introBg, uploadedRecBg = modal.upload_recBg;
+  const uploadedIcon = modal.upload_icon, uploadedWnCover = modal.upload_wnCover;
+  const colorVal = ($('#m-color') || {}).value || '';
+  let firstError = null;
+  const err = function (field, msg) { setFieldError(field, true); const box = $('[data-field="' + field + '"]'); if (box) { const e = box.querySelector('.err-msg'); if (e) e.textContent = msg; if (!firstError) firstError = box; } };
+  ['name', 'audio', 'legacySub', 'effectMain', 'cover34', 'cover11', 'introBg', 'icon', 'color', 'wnCover'].forEach(function (f) { setFieldError(f, false); });
+  if (name.length < 2 || name.length > 30) err('name', '请输入 2–30 个字符的课程名称');
+  if (!isSeries && !isWhite && !isFeaturedWhite && !audioInputValue().trim()) err('audio', '请填写音视频地址');
+  if (!isSeries && !audioInputValue().trim() && isWhite && !isFeaturedWhite) err('audio', '请填写音视频地址');
+  if ((LEGACY_SUBTYPES[legacyType] || []).length && !legacySub) err('legacySub', '请选择小分类');
+  if (!effectMain) err('effectMain', '请选择主功效');
+  if (isSeries) {
+    if (!uploadedC34 || !uploadedC34.src) err('cover34', '请上传 3:4 列表封面');
+    if (!uploadedC11 || !uploadedC11.src) err('cover11', '请上传 1:1 列表封面');
+    if (!uploadedIntroBg || !uploadedIntroBg.src) err('introBg', '请上传介绍页背景');
+  } else if (isFeaturedWhite) {
+    const refErrors = refTracks.map(function (t) {
+      if (!t.contentId) return '请输入白噪音音频 ID';
+      const c = findContent(t.contentId);
+      if (!c) return '内容不存在';
+      if (c.status === 'off') return '内容已禁用';
+      if (c.kind !== 'single' || c.legacyType !== '白噪音' || c.topFeatured) return '仅支持已启用的普通白噪音单曲';
+      return '';
+    });
+    const seen = {};
+    refTracks.forEach(function (t, i) { if (refErrors[i]) return; if (seen[t.contentId]) refErrors[i] = '与第 ' + seen[t.contentId] + ' 条重复'; else seen[t.contentId] = i + 1; });
+    refTracks.forEach(function (t, i) {
+      if (refErrors[i]) return;
+      const other = CONTENT.find(function (x) { return x.id !== modal.id && x.kind === 'single' && x.legacyType === '白噪音' && x.topFeatured && (x.refTracks || []).some(function (r) { return String(r.contentId) === String(t.contentId); }); });
+      if (other) refErrors[i] = '该音频已配置在白噪音精选（内容 ID ' + other.id + '）';
+    });
+    modal.refTrackErrors = refErrors;
+    modal.refTrackMsg = (refTracks.length < 2 || refTracks.length > 7) ? ('媒体文件需 2–7 条（当前 ' + refTracks.length + ' 条）') : '';
+    if (modal.refTrackMsg || refErrors.some(Boolean)) { renderRefTracks(); if (!firstError) firstError = $('#m-ref-track-list'); }
+    if (!uploadedWnCover || !uploadedWnCover.src) err('wnCover', '请上传白噪音封面');
+  } else if (isWhite) {
+    if (!uploadedIcon || !uploadedIcon.src) err('icon', '请上传白噪音图标');
+    if (!/^#[0-9a-fA-F]{6}$/.test(colorVal)) err('color', '请填写 #RRGGBB 色值');
+    if (isFeaturedWhite && (!uploadedWnCover || !uploadedWnCover.src)) err('wnCover', '请上传白噪音封面');
+  } else {
+    if (!uploadedC34 || !uploadedC34.src) err('cover34', '请上传 3:4 列表封面');
+    if (!uploadedC11 || !uploadedC11.src) err('cover11', '请上传 1:1 列表封面');
+    if (!uploadedIntroBg || !uploadedIntroBg.src) err('introBg', '请上传介绍页背景');
+  }
+  if (firstError) { toast('还有必填项未完成，请检查标红字段', 'error'); if (firstError.scrollIntoView) firstError.scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
+  const item = {
+    id: modal.id == null ? (Math.max.apply(null, CONTENT.map(function (c) { return c.id; })) + 1) : modal.id,
+    name: name, legacyDesc: $('#m-legacy-desc').value, kind: kind,
+    legacyType: legacyType,
+    isFree: isFree, isNew: isNew,
+    memberPlan: (($('#modal input[name="m-member-plan"]:checked') || {}).value) || '无',
+    legacyStatus: (($('#modal input[name="m-legacy-status"]:checked') || {}).value) || '已上架',
+    newEnd: $('#m-new-end').value, sku: $('#m-sku').value.trim(), sort: parseInt($('#m-sort').value, 10) || 0,
+    featuredSort: topFeatured ? (parseInt(($('#m-featured-sort') || {}).value, 10) || 0) : 0,
+    homeFeaturedSort: homeFeatured ? (parseInt(($('#m-home-featured-sort') || {}).value, 10) || 0) : 0,
+    audioUrl: (isSeries || isFeaturedWhite) ? '' : audioInputValue().trim(),
+    audioDuration: (isSeries || isFeaturedWhite) ? '' : (($('#m-duration') || {}).value || ''),
+    trialDuration: (isSeries || isFeaturedWhite) ? '' : (($('#m-trial') || {}).value || ''),
+    type: legacyType, sub: legacySub, legacySub: legacySub, effectMain: effectMain,
+    cover34: (isSeries || (!isWhite)) ? uploadedC34 : null,
+    cover11: (isSeries || (!isWhite)) ? uploadedC11 : null,
+    introBg: (isSeries || (!isWhite)) ? uploadedIntroBg : null,
+    recBg: (isSeries || (!isWhite)) ? uploadedRecBg : null,
+    icon: isWhite ? uploadedIcon : null,
+    color: isWhite ? colorVal : '',
+    wnCover: isFeaturedWhite ? uploadedWnCover : null,
+    introTitle: isWhite ? '' : (($('#m-intro-title') || {}).value || ''),
+    introBody: isWhite ? '' : (($('#m-intro-body') || {}).value || ''),
+    permission: permission, status: ((($('#modal input[name="m-legacy-status"]:checked') || {}).value) === '已上架') ? 'on' : 'off',
+    newDate: $('#m-new-end').value || '', topFeatured: topFeatured, homeFeatured: homeFeatured,
+    refTracks: isFeaturedWhite ? refTracks.map(function (t) { const c = findContent(t.contentId); return { contentId: Number(t.contentId), name: c ? c.name : '', duration: c ? (c.audioDuration || '') : '' }; }) : [],
+    chapters: kind === 'series' ? ((modal.id != null && (CONTENT.find(function (c) { return c.id === modal.id; }) || {}).chapters) || []) : []
+  };
+  if (modal.chapterCtx) {
+    const series = CONTENT.find(function (c) { return c.id === modal.chapterCtx.seriesId; });
+    if (series) {
+      series.chapters = series.chapters || [];
+      const ch = {
+        id: modal.chapterCtx.chapter ? modal.chapterCtx.chapter.id : (Date.now() % 1000000),
+        name: name, audioUrl: item.audioUrl, audioDuration: item.audioDuration,
+        cover: (modal.chapterCtx.chapter ? modal.chapterCtx.chapter.cover : null), isFree: isFree ? '免费' : '付费',
+        onlineDate: $('#m-new-end').value || '', visible: '显示', sort: item.sort,
+        cover11: uploadedC11 || null
+      };
+      if (modal.chapterCtx.chapter) {
+        const idx = series.chapters.findIndex(function (x) { return x.id === ch.id; });
+        if (idx >= 0) series.chapters[idx] = ch; else series.chapters.push(ch);
+      } else {
+        series.chapters.push(ch);
+      }
+      toast('小课已保存');
+      closeModal();
+      renderPage();
+      return;
+    }
+  }
+  if (modal.mode === 'add') {
+    CONTENT.unshift(item);
+    toast('内容已添加');
+  } else {
+    const idx = CONTENT.findIndex(function (c) { return c.id === modal.id; });
+    if (idx >= 0) CONTENT[idx] = item;
+    toast('内容已保存');
+  }
+  closeModal();
+  if (UI.active === 'content') renderPage(); else navigate('content');
+}
+function chapterModalHTML(ch, mode, series) {
+  const ro = mode === 'view'; const dis = ro ? ' disabled' : '';
+  return {
+    title: mode === 'add' ? '添加小课' : mode === 'edit' ? '编辑小课' : '查看小课', wide: true,
+    body:
+      '<div class="form-section"><div class="section-head"><span class="sec-bar"></span>基础信息（旧字段）<span class="sec-tip">系列课：' + esc(series.name) + '</span></div>' +
+        '<div class="fgrid single-col">' +
+          '<div class="fitem full"><div class="label">系列课名称</div><input type="text" value="' + esc(series.name) + '" disabled><div class="hint">只读，顶部展示</div></div>' +
+          '<div class="fitem" data-field="chName"><div class="label"><span class="req">*</span>小课名称</div><input type="text" id="c-name" maxlength="30" value="' + esc(ch.name || '') + '"' + dis + '><div class="err-msg">请输入小课名称</div></div>' +
+          '<div class="fitem" data-field="chAudio"><div class="label"><span class="req">*</span>音视频地址</div><div style="display:flex;gap:8px"><input type="text" id="c-audio" value="' + esc(ch.audioUrl || '') + '" placeholder="https://… .mp3 / .mp4"' + dis + '><button class="btn sm primary" data-act="chapter-pick-audio"' + (ro ? ' disabled' : '') + '>上传</button><input type="file" id="up-chapter-audio-input" accept="audio/*,video/mp4" hidden></div><div class="err-msg">请填写音视频地址</div></div>' +
+          '<div class="fitem"><div class="label">音视频时长</div><input type="text" id="c-duration" value="' + esc(ch.audioDuration || '') + '"' + dis + '></div>' +
+
+          '<div class="fitem"><div class="label"><span class="req">*</span>是否免费</div><div class="radio-row">' + radio('c-isfree', '免费', ch.isFree === '免费' ? '免费' : '付费', ro) + radio('c-isfree', '付费', ch.isFree === '免费' ? '免费' : '付费', ro) + '</div></div>' +
+          '<div class="fitem" data-field="chDate"><div class="label"><span class="req">*</span>上线时间</div><input type="date" id="c-online" value="' + esc(ch.onlineDate || '') + '"' + dis + '><div class="err-msg">请选择上线时间</div></div>' +
+          '<div class="fitem"><div class="label"><span class="req">*</span>是否显示</div><div class="radio-row">' + radio('c-visible', '显示', ch.visible === '显示' ? '显示' : '隐藏', ro) + radio('c-visible', '隐藏', ch.visible === '显示' ? '显示' : '隐藏', ro) + '</div></div>' +
+          '<div class="fitem"><div class="label">排序</div><input type="number" id="c-sort" value="' + (ch.sort == null ? 0 : ch.sort) + '"' + dis + '></div>' +
+        '</div></div>' +
+      '<div class="form-section"><div class="section-head"><span class="sec-bar"></span>封面（1:1）<span class="sec-tip">唯一封面，必填；1080×1080，静态≤2MB / GIF≤5MB</span></div><div class="fgrid single-col">' +
+        '<div class="fitem" data-field="chCover11"><div class="label"><span class="req">*</span>音频卡片封面（1:1）</div><div class="upload-box"><div class="up-preview" id="up-chapterCover11-preview"></div><div class="up-meta"><div>JPG / PNG / WebP / GIF（GIF≤5MB），静态≤2MB；建议 1080×1080</div><div class="up-actions"><button class="btn sm primary" data-act="pick-upload" data-target="chapterCover11"' + (ro ? ' disabled' : '') + '>选择文件</button><button class="btn sm" data-act="clear-upload" data-target="chapterCover11"' + (ro ? ' disabled' : '') + '>清除</button></div><div class="up-name" id="up-chapterCover11-name"></div></div><input type="file" id="up-chapterCover11-input" accept="image/jpeg,image/png,image/webp,image/gif" hidden></div><div class="err-msg">请上传音频卡片封面（1:1）</div></div>' +
+      '</div></div>',
+    footer: ro ? '<button class="btn" data-act="modal-close">关闭</button>' : '<button class="btn" data-act="modal-close">取消</button><button class="btn primary" data-act="chapter-save">保存</button>'
+  };
+}
+function openChapterModal(seriesId, index) {
+  const series = CONTENT.find(function (c) { return c.id === seriesId; }); if (!series) return;
+  const ch = index == null ? { name: '', audioUrl: '', audioDuration: '', cover11: null, isFree: '免费', onlineDate: '', visible: '显示', sort: (series.chapters || []).length } : series.chapters[index];
+  const view = false;
+  const opts = chapterModalHTML(ch, index == null ? 'add' : 'edit', series);
+  openModal({ title: opts.title, wide: true, body: opts.body, footer: opts.footer,
+    ctx: { type: 'chapter', seriesId: seriesId, index: index, upload_chapterCover11: mediaOf(ch.cover11) },
+    onMount: function () {
+      renderUploadPreview('chapterCover11');
+      bindUploadInput('chapterCover11', UPLOAD_LIMIT.chapterCover11);
+      const au = $('#up-chapter-audio-input');
+      if (au) au.addEventListener('change', function () { const f = au.files && au.files[0]; au.value = ''; if (f) { $('#c-audio').value = 'https://cdn.navolove.com/resource/sleep/uploads/' + encodeURIComponent(f.name); toast('已上传（模拟）', 'info'); } });
+    } });
+}
+function collectAndSaveChapter() {
+  const modal = UI.modal; if (!modal) return;
+  const series = CONTENT.find(function (c) { return c.id === modal.seriesId; }); if (!series) return;
+  const name = ($('#c-name').value || '').trim();
+  const audio = ($('#c-audio').value || '').trim();
+  const cover11 = modal.upload_chapterCover11;
+  const online = $('#c-online').value;
+  const fail = function (field, msg) { const box = $('[data-field="' + field + '"]'); if (box) { box.classList.add('has-error'); const e = box.querySelector('.err-msg'); if (e) e.textContent = msg; box.scrollIntoView({ block: 'center', behavior: 'smooth' }); } toast(msg, 'error'); };
+  ['chName', 'chAudio', 'chCover11', 'chDate'].forEach(function (f) { const b = $('[data-field="' + f + '"]'); if (b) b.classList.remove('has-error'); });
+  if (!name) return fail('chName', '请输入小课名称');
+  if (!audio) return fail('chAudio', '请填写音视频地址');
+  if (!cover11 || !cover11.src) return fail('chCover11', '请上传音频卡片封面（1:1）');
+  if (!online) return fail('chDate', '请选择上线时间');
+  const ch = { id: modal.index == null ? (Date.now() % 1000000) : series.chapters[modal.index].id, name: name, audioUrl: audio, audioDuration: ($('#c-duration').value || ''), isFree: (($('#modal input[name="c-isfree"]:checked') || {}).value) || '免费', onlineDate: online, visible: (($('#modal input[name="c-visible"]:checked') || {}).value) || '显示', sort: parseInt($('#c-sort').value, 10) || 0, cover11: cover11 };
+  series.chapters = series.chapters || [];
+  if (modal.index == null) series.chapters.push(ch); else series.chapters[modal.index] = ch;
+  toast('小课已保存'); closeModal(); renderPage();
+}
+
+/* =========================================================
+   榜单配置
+   ========================================================= */
+let rankDraft = RANK_INIT.map(function (r) { return { id: String(r.id), subtitle: r.subtitle }; });
+function findContent(id) {
+  const n = parseInt(id, 10);
+  if (!id || isNaN(n)) return null;
+  return CONTENT.find(function (c) { return c.id === n; }) || null;
+}
+function rankRowHTML(pos) {
+  const idx = pos - 1;
+  const d = rankDraft[idx] || { id: '', subtitle: '' };
+  const c = findContent(d.id);
+  return '<tr class="' + (rankError[idx] ? 'rank-row-error' : '') + '" data-rank-row="' + pos + '">' +
+    '<td class="col-center"><b>' + pos + '</b></td>' +
+    '<td><span class="rank ' + (pos <= 3 ? 'top' + pos : 'topn') + '">TOP' + pos + '</span></td>' +
+    '<td><input type="text" class="rank-id-input" id="rank-id-' + pos + '" data-rank-pos="' + pos + '" data-rank-k="id" value="' + esc(d.id) + '" placeholder="内容 ID"><span class="rank-err' + (rankError[idx] ? '' : ' hidden') + '" id="rank-err-' + pos + '">' + esc(rankError[idx] || '') + '</span></td>' +
+    '<td><div class="rank-content" id="rank-info-' + pos + '">' + rankInfoHTML(d.id) + '</div></td>' +
+    '<td><input type="text" class="rank-subtitle-input" id="rank-subtitle-' + pos + '" data-rank-pos="' + pos + '" data-rank-k="subtitle" maxlength="10" value="' + esc(d.subtitle) + '" placeholder="副标题，≤10 字"></td>' +
+    '<td class="col-center"><button class="btn sm" data-act="rank-clear" data-pos="' + pos + '">清除</button></td>' +
+    '</tr>';
+}
+function rankInfoHTML(id) {
+  if (!id) return '<span class="rank-empty">未配置（前台按内容排序兜底）</span>';
+  const c = findContent(id);
+  if (!c) return '<span class="rank-empty" style="color:#ff4d4f">未找到 ID ' + esc(id) + '</span>';
+  return thumbHTML(c.cover11 || c.cover34, { broken: c.coverBroken }) + '<div class="info" style="min-width:0"><div class="nm">' + esc(c.name) + '</div><div class="ty">' + esc(c.type) + ' · ' + esc(c.sub) + (c.status === 'off' ? ' · <span style="color:#ff4d4f">已禁用</span>' : '') + '</div></div>';
+}
+let rankError = [null, null, null, null, null, null, null, null, null, null];
+function rankPageHTML() {
+  let rows = '';
+  for (let i = 1; i <= 10; i++) rows += rankRowHTML(i);
+  return '<div class="page"><div class="rank-layout"><div class="rank-main">' +
+    '<div class="query-card" style="display:block"><div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">' +
+      '<div style="font-size:13px;color:#4a5563">热门榜单固定 10 个位置（TOP1–TOP10），只需填写 <b>内容 ID</b> 与 <b>副标题</b>（≤10 字，有内容 ID 时必填，可随意填写）；名称、封面、类型自动读取内容配置，保存即生效。</div>' +
+      '<div class="q-actions" style="margin-left:auto"><button class="btn primary" data-act="rank-save">保存榜单</button></div>' +
+    '</div></div>' +
+    '<div class="card"><div class="card-head"><div class="card-title"><span class="bar"></span>榜单配置 <span class="card-sub">位置 1–10 对应首页 TOP1–TOP10；搜索页热门榜复用前 6 条</span></div></div>' +
+      '<div class="table-wrap"><table class="grid rank-table"><colgroup><col style="width:66px"><col style="width:86px"><col style="width:190px"><col><col style="width:200px"><col style="width:90px"></colgroup>' +
+      '<thead><tr><th class="col-center">位置</th><th>TOP 名次</th><th>内容 ID</th><th>内容信息（自动读取）</th><th>副标题</th><th class="col-center">操作</th></tr></thead>' +
+      '<tbody id="rankTbody">' + rows + '</tbody></table></div>' +
+      '<div class="card-foot-note">校验：内容 ID 需存在且为启用状态；同一 ID 不可重复；填了 ID 必须填副标题（≤10 字）。首页未配置或不足时按内容排序兜底。</div>' +
+    '</div></div>' +
+    '<aside class="rank-side">' + rankPreviewHTML() + '</aside></div></div>';
+}
+function rankPreviewHTML() {
+  return '<div class="preview-card"><div class="pc-head"><div class="pc-title"><span class="bar"></span>前台预览 <span class="card-sub" style="font-size:11px;color:#98a2b3">实时随输入更新</span></div></div>' +
+    '<div class="rp-tabs"><span class="rp-tab' + (UI.rankPreview.tab === 'home' ? ' active' : '') + '" data-act="rank-tab" data-tab="home">首页 · 热门榜单</span>' +
+    '<span class="rp-tab' + (UI.rankPreview.tab === 'search' ? ' active' : '') + '" data-act="rank-tab" data-tab="search">搜索页 · 热门榜</span></div>' +
+    '<div class="rp-body" id="rankPreviewBody">' + rankPreviewBodyHTML() + '</div></div>';
+}
+function rankItemHTML(pos, opts) {
+  const o = opts || {};
+  const d = rankDraft[pos - 1] || { id: '', subtitle: '' };
+  const c = findContent(d.id);
+  if (!c) {
+    return '<div class="rp-item"><span class="rank ' + (pos <= 3 ? 'top' + pos : 'topn') + '">' + (o.search ? (pos) : 'TOP' + pos) + '</span>' +
+      '<div class="info"><div class="nm muted">位置 ' + pos + ' 未配置</div><div class="sub">' + (o.search ? '前台按内容排序兜底' : '按内容排序兜底') + '</div></div></div>';
+  }
+  return '<div class="rp-item">' +
+    '<span class="rank ' + (pos <= 3 ? 'top' + pos : 'topn') + '">' + (o.search ? (pos) : 'TOP' + pos) + '</span>' +
+    thumbHTML(c.cover11 || c.cover34, { broken: c.coverBroken }) +
+    '<div class="info"><div class="nm">' + esc(c.name) + '</div><div class="sub">' + (o.search ? esc(c.type) : (d.subtitle ? esc(d.subtitle) : '副标题待填')) + '</div></div>' +
+    (o.search ? '' : '<span class="play">▶</span>') + '</div>';
+}
+function rankPreviewBodyHTML() {
+  if (UI.rankPreview.tab === 'home') {
+    const page = UI.rankPreview.page;
+    let items = '';
+    for (let i = page * 3 + 1; i <= Math.min(10, page * 3 + 3); i++) items += rankItemHTML(i, {});
+    return '<div class="rp-page-label"><span>首页 · 第 ' + (page + 1) + ' / 4 页（每页 3 条，最后一页 1 条）</span><span>共 10 个位置</span></div>' + items +
+      '<div class="rp-dots">' + [0, 1, 2, 3].map(function (p) {
+        return '<span class="rp-dot' + (p === page ? ' active' : '') + '" data-act="rank-page" data-page="' + p + '"></span>';
+      }).join('') + '</div>';
+  }
+  let items = '';
+  for (let i = 1; i <= 6; i++) items += rankItemHTML(i, { search: true });
+  return '<div class="rp-page-label"><span>搜索页 · 热门榜（前 6 条，不展示副标题）</span><span>复用前 6 个位置</span></div>' + items;
+}
+function refreshRankPreview() {
+  const body = $('#rankPreviewBody');
+  if (!body) return;
+  body.innerHTML = rankPreviewBodyHTML();
+  $$('.rp-tab').forEach(function (t) { t.classList.toggle('active', t.dataset.tab === UI.rankPreview.tab); });
+}
+function refreshRankRow(pos) {
+  const row = $('[data-rank-row="' + pos + '"]');
+  if (!row) return;
+  const idx = pos - 1;
+  row.querySelector('#rank-info-' + pos).innerHTML = rankInfoHTML(rankDraft[idx].id);
+  const errEl = row.querySelector('#rank-err-' + pos);
+  if (errEl) {
+    errEl.textContent = rankError[idx] || '';
+    errEl.classList.toggle('hidden', !rankError[idx]);
+  }
+  row.classList.toggle('rank-row-error', !!rankError[idx]);
+}
+function bindRankPage() {}
+function validateAndSaveRank() {
+  rankError = [null, null, null, null, null, null, null, null, null, null];
+  const seen = {};
+  let bad = 0;
+  const filled = rankDraft.filter(function (d) { return d.id.trim(); }).length;
+  for (let i = 0; i < 10; i++) {
+    const d = rankDraft[i];
+    const id = d.id.trim();
+    if (!id) continue;
+    const c = findContent(id);
+    if (!c) { rankError[i] = '内容不存在'; bad++; continue; }
+    if (c.status === 'off') { rankError[i] = '内容已禁用'; bad++; continue; }
+    if (seen[id]) { rankError[i] = '与位置 ' + seen[id] + ' 重复'; bad++; continue; }
+    seen[id] = i + 1;
+    if (!d.subtitle.trim()) { rankError[i] = '请填写副标题'; bad++; continue; }
+    if (d.subtitle.trim().length > 10) { rankError[i] = '副标题 ≤ 10 字'; bad++; continue; }
+  }
+  for (let i = 0; i < 10; i++) refreshRankRow(i + 1);
+  if (bad) {
+    toast('榜单有 ' + bad + ' 处需要修正，请检查标红位置', 'error');
+    const first = $('.rank-row-error');
+    if (first) first.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    return;
+  }
+  RANKING = rankDraft.map(function (d) { return { id: d.id.trim(), subtitle: d.subtitle.trim() }; });
+  toast(filled === 10 ? '榜单已保存，首页 TOP1–TOP10 生效' : '榜单已保存（' + filled + '/10 个位置已配置，未配置位置按内容排序兜底）');
+}
+
+/* =========================================================
+   搜索发现配置
+   ========================================================= */
+function suffixChipHTML(item) {
+  if (item.suffix === 'hot') return '<span class="sfx-hot">🔥热🔥</span>';
+  if (item.suffix === 'new') return '<span class="sfx-new">new</span>';
+  return '';
+}
+function suffixTagHTML(suffix) {
+  if (suffix === 'hot') return '<span class="tag tag-orange">热</span>';
+  if (suffix === 'new') return '<span class="tag tag-blue">new</span>';
+  return '<span class="tag tag-gray">无</span>';
+}
+function suffixName(suffix) {
+  return suffix === 'hot' ? '热' : suffix === 'new' ? 'new' : '无';
+}
+function validSearchItems() {
+  return SEARCH.filter(function (s) { return s.status === 'on'; }).sort(function (a, b) { return a.sort - b.sort; });
+}
+function searchPreviewChipsHTML() {
+  const items = validSearchItems();
+  if (!items.length) return '<span class="sc-empty">暂无有效词条，前台将隐藏「搜索发现」模块</span>';
+  return items.map(function (s) {
+    return '<span class="sc-chip" data-act="search-chip" data-word="' + esc(s.word) + '">' + esc(s.word) + suffixChipHTML(s) + '</span>';
+  }).join('');
+}
+function searchPageHTML() {
+  const items = SEARCH.slice().sort(function (a, b) { return a.sort - b.sort; });
+  const rows = items.map(function (s) {
+    return '<tr data-search-id="' + s.id + '">' +
+      '<td><b>' + esc(s.word) + '</b></td>' +
+      '<td>' + suffixTagHTML(s.suffix) + '</td>' +
+      '<td>' + s.sort + '</td>' +
+      '<td><span class="' + (s.status === 'on' ? 'status-on' : 'status-off') + '">' + (s.status === 'on' ? '启用' : '禁用') + '</span></td>' +
+      '<td><div class="ops"><a data-act="search-edit" data-id="' + s.id + '">编辑</a>' +
+        '<a data-act="search-toggle" data-id="' + s.id + '">' + (s.status === 'on' ? '禁用' : '启用') + '</a>' +
+        '<a class="danger" data-act="search-del" data-id="' + s.id + '">删除</a></div></td></tr>';
+  }).join('');
+  return '<div class="page">' +
+    '<div class="card"><div class="card-head"><div class="card-title"><span class="bar"></span>搜索发现预览 <span class="card-sub">按排序展示启用中的词条，最多 6 个；点击词条发起搜索</span></div></div>' +
+      '<div class="card-body"><div class="search-preview" id="searchPreviewChips">' + searchPreviewChipsHTML() + '</div></div></div>' +
+    '<div class="card"><div class="card-head"><div class="card-title"><span class="bar"></span>搜索发现列表 <span class="card-sub">共 <b id="searchTotal">' + SEARCH.length + '</b> 个词条 · 有效（启用）<b id="searchValidCount">' + validSearchItems().length + '</b> 个</span></div>' +
+      '<div class="head-actions"><button class="btn primary" data-act="search-add">＋ 添加搜索词</button></div></div>' +
+      '<table class="grid"><colgroup><col style="width:240px"><col style="width:150px"><col style="width:120px"><col style="width:120px"><col></colgroup>' +
+      '<thead><tr><th>搜索词</th><th>后缀标记</th><th>排序</th><th>状态</th><th>操作</th></tr></thead><tbody id="searchTbody">' + rows + '</tbody></table>' +
+      '<div class="card-foot-note">规则：搜索词 2–10 字且全站唯一；后缀标记只作装饰，不参与搜索；最多 6 个有效词（建议 3 个）；无有效词时前台隐藏该模块。</div>' +
+    '</div>' +
+    '<div class="pagination" style="padding-left:4px"><span>共 <b id="searchTotal2">' + SEARCH.length + '</b> 条</span><div class="pager"><span class="page-btn">‹</span><span class="page-btn active">1</span><span class="page-btn">›</span></div></div>' +
+  '</div>';
+}
+function bindSearchPage() {}
+function refreshSearchPage() {
+  const chipBox = $('#searchPreviewChips');
+  if (chipBox) chipBox.innerHTML = searchPreviewChipsHTML();
+  const rows = SEARCH.slice().sort(function (a, b) { return a.sort - b.sort; }).map(function (s) {
+    return '<tr data-search-id="' + s.id + '"><td><b>' + esc(s.word) + '</b></td><td>' + suffixTagHTML(s.suffix) + '</td><td>' + s.sort + '</td>' +
+      '<td><span class="' + (s.status === 'on' ? 'status-on' : 'status-off') + '">' + (s.status === 'on' ? '启用' : '禁用') + '</span></td>' +
+      '<td><div class="ops"><a data-act="search-edit" data-id="' + s.id + '">编辑</a><a data-act="search-toggle" data-id="' + s.id + '">' +
+      (s.status === 'on' ? '禁用' : '启用') + '</a><a class="danger" data-act="search-del" data-id="' + s.id + '">删除</a></div></td></tr>';
+  }).join('');
+  const tb = $('#searchTbody'); if (tb) tb.innerHTML = rows;
+  const vc = $('#searchValidCount'); if (vc) vc.textContent = validSearchItems().length;
+  const st = $('#searchTotal'); if (st) st.textContent = SEARCH.length;
+  const st2 = $('#searchTotal2'); if (st2) st2.textContent = SEARCH.length;
+}
+const BAD_WORDS = ['治愈', '根治', '疗效', '第一', '最好', '绝对', '永久'];
+function openSearchModal(id) {
+  const item = id == null ? { word: '', suffix: 'none', sort: SEARCH.length + 1, status: 'on', start: '', end: '' } : SEARCH.find(function (s) { return s.id === id; });
+  if (!item) return;
+  const isEdit = id != null;
+  const radio = function (name, val, cur) { return '<label><input type="radio" name="' + name + '" value="' + val + '"' + (cur === val ? ' checked' : '') + '>' + ({ none: '无', hot: '热', new: 'new' }[val]) + '</label>'; };
+  openModal({
+    ctx: { type: 'search', id: id },
+    title: isEdit ? '编辑搜索词' : '添加搜索词',
+    body: '<div class="fgrid" style="padding-top:14px">' +
+      '<div class="fitem" data-field="word"><div class="label"><span class="req">*</span>搜索词</div><input type="text" id="s-word" maxlength="10" value="' + esc(item.word) + '" placeholder="2–10 个字，全站唯一"><div class="hint">前台展示为标签文字，点击后以该词发起搜索</div><div class="err-msg">请输入 2–10 个字的搜索词</div></div>' +
+      '<div class="fitem"><div class="label"><span class="req">*</span>后缀标记</div><div class="radio-row">' + radio('s-suffix', 'none', item.suffix) + radio('s-suffix', 'hot', item.suffix) + radio('s-suffix', 'new', item.suffix) + '</div><div class="hint">热 → 🔥热🔥 样式；new → 橙色斜体 new；后缀只作装饰</div></div>' +
+      '<div class="fitem"><div class="label"><span class="req">*</span>排序</div><input type="number" id="s-sort" value="' + (item.sort || 1) + '"><div class="hint">数字越小越靠前</div></div>' +
+      '<div class="fitem"><div class="label"><span class="req">*</span>状态</div><div class="radio-row">' +
+        '<label><input type="radio" name="s-status" value="on"' + (item.status === 'on' ? ' checked' : '') + '>启用</label>' +
+        '<label><input type="radio" name="s-status" value="off"' + (item.status === 'off' ? ' checked' : '') + '>禁用</label></div></div>' +
+      '<div class="fitem"><div class="label">生效开始时间</div><input type="datetime-local" id="s-start" value="' + esc((item.start || '').replace(' ', 'T')) + '"><div class="hint">为空表示立即生效</div></div>' +
+      '<div class="fitem"><div class="label">生效结束时间</div><input type="datetime-local" id="s-end" value="' + esc((item.end || '').replace(' ', 'T')) + '"><div class="hint">为空表示长期有效，须晚于开始时间</div></div>' +
+    '</div>',
+    footer: '<button class="btn" data-act="modal-close">取消</button><button class="btn primary" data-act="search-save">保存</button>'
+  });
+}
+function saveSearch() {
+  const word = ($('#s-word').value || '').trim();
+  const suffix = (($('#modal input[name="s-suffix"]:checked') || {}).value) || 'none';
+  const sort = parseInt($('#s-sort').value, 10) || 1;
+  const status = (($('#modal input[name="s-status"]:checked') || {}).value) || 'on';
+  const start = ($('#s-start').value || '').replace('T', ' ');
+  const end = ($('#s-end').value || '').replace('T', ' ');
+  const item = UI.modal;
+  const setErr = function (field, msg) {
+    const box = $('[data-field="' + field + '"]');
+    if (box) { box.classList.add('has-error'); if (msg) box.querySelector('.err-msg').textContent = msg; }
+    if (box) box.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    toast(msg || '请检查输入', 'error');
+  };
+  if (word.length < 2 || word.length > 10) return setErr('word', '搜索词需 2–10 个字');
+  const dup = SEARCH.find(function (s) { return s.word === word && s.id !== item.id; });
+  if (dup) return setErr('word', '搜索词「' + word + '」已存在，请勿重复');
+  if (BAD_WORDS.some(function (w) { return word.indexOf(w) >= 0; })) return setErr('word', '搜索词包含医疗 / 绝对化违规用语，请修改');
+  if (status === 'on') {
+    const enabledOthers = SEARCH.filter(function (s) { return s.status === 'on' && s.id !== item.id; }).length;
+    if (enabledOthers >= 6) return setErr('word', '最多 6 个有效词条，请先禁用或删除其他词条');
+  }
+  if (start && end && end <= start) return setErr('word', '生效结束时间需晚于开始时间');
+  if (item.id == null) {
+    SEARCH.push({ id: Math.max.apply(null, SEARCH.map(function (s) { return s.id; })) + 1, word: word, suffix: suffix, sort: sort, status: status, start: start, end: end });
+    toast('搜索词已添加');
+  } else {
+    const target = SEARCH.find(function (s) { return s.id === item.id; });
+    Object.assign(target, { word: word, suffix: suffix, sort: sort, status: status, start: start, end: end });
+    toast('搜索词已保存');
+  }
+  closeModal();
+  if (UI.active === 'search') refreshSearchPage(); else navigate('search');
+}
+
+/* =========================================================
+   睡眠报告背景图（客户端本地预置图 + 后台编号配置）
+   ========================================================= */
+function presetThumbHTML(code) {
+  const src = presetSrc(code);
+  return src
+    ? '<div class="asset-thumb"><img src="' + esc(src) + '" alt=""></div>'
+    : '<div class="asset-thumb asset-thumb-empty">占位</div>';
+}
+function assetRowsHTML() {
+  if (!ASSETS.length) return '<tr><td colspan="6"><div class="empty-tip">暂无背景图配置，点击「添加背景配置」新增</div></td></tr>';
+  return ASSETS.map(function (a) {
+    return '<tr data-asset-id="' + a.id + '">' +
+      '<td><div class="asset-code">' + presetThumbHTML(a.code) + '<b>编号 ' + esc(a.code || '—') + '</b></div></td>' +
+      '<td><span class="' + (a.enabled ? 'status-on' : 'status-off') + '">' + (a.enabled ? '是' : '否') + '</span></td>' +
+      '<td>' + esc(a.start || '—') + '</td>' +
+      '<td>' + esc(a.end || '—') + '</td>' +
+      '<td>' + esc(a.updated || '—') + '</td>' +
+      '<td><div class="ops"><a data-act="asset-edit" data-id="' + a.id + '">编辑</a><a data-act="asset-toggle" data-id="' + a.id + '">' + (a.enabled ? '关闭' : '开启') + '</a><a class="danger" data-act="asset-del" data-id="' + a.id + '">删除</a></div></td></tr>';
+  }).join('');
+}
+function computeEffective() {
+  const inRange = function (a) {
+    if (!a.enabled) return false;
+    if (!a.start || !a.end) return false;
+    if (a.start > NOW) return false;
+    if (a.end < NOW) return false;
+    return true;
+  };
+  const list = ASSETS.filter(inRange).sort(function (a, b) { return a.updated < b.updated ? 1 : -1; });
+  return list[0] || null;
+}
+function phoneHTML() {
+  const effective = computeEffective();
+  const src = effective ? presetSrc(effective.code) : null;
+  const bgStyle = src ? 'background-image:url("' + src + '");background-size:cover;background-position:center center;' : '';
+  return '<div class="phone"><div class="ph-screen">' +
+    '<div class="ph-bg"></div>' + (src ? '<div class="ph-hero" style="' + bgStyle + '"></div>' : '<div class="ph-hero"></div>') + '<div class="ph-overlay"></div>' +
+    '<div class="ph-content">' +
+      '<div class="ph-status"><span>9:41</span><span>●●●  ▮</span></div>' +
+      '<div class="ph-title">睡眠报告</div>' +
+      '<div class="ph-tabs"><span class="ph-tab active">日报告</span><span class="ph-tab">睡眠趋势</span></div>' +
+      '<div class="ph-cards">' +
+        '<div class="ph-card"><div class="k">昨夜睡眠时长</div><div class="v">7<small>小时</small> 32<small>分</small></div></div>' +
+        '<div class="ph-card"><div class="ph-score"><div class="ph-ring"><span>86</span></div><div><div class="k">睡眠评分</div><div class="v" style="font-size:15px">优于 78% 的用户</div></div></div><div class="ph-bars">' +
+          [22, 40, 18, 30, 34, 46, 26, 20, 38, 48, 22, 16].map(function (h) { return '<i style="height:' + h + 'px"></i>'; }).join('') +
+        '</div></div>' +
+      '</div>' +
+    '</div></div></div>';
+}
+function assetPreviewCardHTML() {
+  const effective = computeEffective();
+  const caption = effective
+    ? '当前生效：编号 <b>' + esc(effective.code) + '</b> · 客户端读取本地预置图<br><span>' + esc(effective.start) + ' 至 ' + esc(effective.end) + '</span>'
+    : '默认背景（当前无生效配置；未开启 / 未到时间 / 已过期 / 加载失败时，客户端使用内置默认图）';
+  return '<div class="preview-card"><div class="pc-head"><div class="pc-title"><span class="bar"></span>前台预览 · 睡眠报告页</div><span class="card-sub" style="font-size:11px">实时生效</span></div>' +
+    '<div class="phone-wrap" id="phoneWrap">' + phoneHTML() + '</div>' +
+    '<div class="ph-caption" id="assetCaption">' + caption + '</div></div>';
+}
+function assetsPageHTML() {
+  return '<div class="page"><div class="asset-layout"><div class="asset-main">' +
+    '<div class="card"><div class="card-head"><div class="card-title"><span class="bar"></span>睡眠报告背景图 <span class="card-sub">客户端本地预置图，服务端下发生效编号；同一时间仅 1 张开启；当前共 ' + ASSETS.length + ' 条配置</span></div>' +
+      '<div class="head-actions"><button class="btn sm" data-act="asset-refresh">刷新</button><button class="btn primary" data-act="asset-add">＋ 添加背景配置</button></div></div>' +
+      '<div class="table-wrap"><table class="grid"><colgroup><col style="width:150px"><col style="width:90px"><col style="width:150px"><col style="width:150px"><col style="width:140px"><col style="width:160px"></colgroup>' +
+      '<thead><tr><th>编号</th><th>是否开启</th><th>开始时间</th><th>结束时间</th><th>更新时间</th><th>操作</th></tr></thead>' +
+      '<tbody id="assetTbody">' + assetRowsHTML() + '</tbody></table></div>' +
+      '<div class="card-foot-note">背景图为客户端本地预置图（编号 01/02/03…），后台只配置编号与生效时间；服务端下发当前生效编号，客户端读取本地图展示；未开启/未到时间/已过期/加载失败时使用客户端默认背景。</div>' +
+    '</div></div>' +
+    '<aside class="asset-side" id="assetSide">' + assetPreviewCardHTML() + '</aside></div></div>';
+}
+function bindAssetsPage() {}
+function refreshAssetsPage() {
+  const tb = $('#assetTbody'); if (tb) tb.innerHTML = assetRowsHTML();
+  const side = $('#assetSide'); if (side) side.innerHTML = assetPreviewCardHTML();
+}
+function openAssetModal(id) {
+  const isEdit = id != null;
+  const a = isEdit ? ASSETS.find(function (x) { return x.id === id; }) : { code: '', enabled: false, start: '', end: '' };
+  if (!a) return;
+  const radio = function (name, val, cur, label) { return '<label><input type="radio" name="' + name + '" value="' + val + '"' + (cur === val ? ' checked' : '') + '>' + label + '</label>'; };
+  const presets = PRESET_BGS.map(function (b) {
+    return '<label class="preset-item' + (a.code === b.code ? ' checked' : '') + '"><input type="radio" name="a-code" value="' + b.code + '"' + (a.code === b.code ? ' checked' : '') + '><img src="' + b.src + '" alt=""><span>编号 ' + b.code + '</span></label>';
+  }).join('');
+  openModal({
+    ctx: { type: 'asset', id: id },
+    title: isEdit ? '编辑背景配置' : '添加背景配置',
+    wide: true,
+    body: '<div class="fgrid" style="padding-top:14px">' +
+      '<div class="fitem full" data-field="assetCode"><div class="label"><span class="req">*</span>背景图编号</div><div class="preset-grid">' + presets + '</div><div class="hint">选择客户端本地预置图编号；服务端仅下发编号，客户端读取本地图</div><div class="err-msg">请选择背景图编号</div></div>' +
+      '<div class="fitem"><div class="label"><span class="req">*</span>是否开启</div><div class="radio-row">' + radio('a-enabled', '是', a.enabled ? '是' : '否', '是') + radio('a-enabled', '否', a.enabled ? '是' : '否', '否') + '</div></div>' +
+      '<div class="fitem" data-field="assetStart"><div class="label">开始时间</div><input type="datetime-local" id="a-start" value="' + esc((a.start || '').replace(' ', 'T')) + '"><div class="hint">是否开启=是时必填</div><div class="err-msg">开启时请填写开始时间</div></div>' +
+      '<div class="fitem" data-field="assetEnd"><div class="label">结束时间</div><input type="datetime-local" id="a-end" value="' + esc((a.end || '').replace(' ', 'T')) + '"><div class="hint">开启时必填，且需晚于开始时间</div><div class="err-msg">开启时请填写结束时间，且需晚于开始时间</div></div>' +
+    '</div>',
+    footer: '<button class="btn" data-act="modal-close">取消</button><button class="btn primary" data-act="asset-save">保存</button>',
+    onMount: function () {
+      $$('#modal input[name="a-code"]').forEach(function (r) {
+        r.addEventListener('change', function () {
+          $$('#modal .preset-item').forEach(function (p) { p.classList.toggle('checked', !!p.querySelector('input').checked); });
+        });
+      });
+    }
+  });
+}
+function saveAsset() {
+  const code = (($('#modal input[name="a-code"]:checked') || {}).value) || '';
+  const enabled = (($('#modal input[name="a-enabled"]:checked') || {}).value) === '是';
+  const start = ($('#a-start').value || '').replace('T', ' ');
+  const end = ($('#a-end').value || '').replace('T', ' ');
+  const showErr = function (field, msg, el) {
+    const box = $('[data-field="' + field + '"]');
+    if (box) { box.classList.add('has-error'); const e = box.querySelector('.err-msg'); if (e && msg) e.textContent = msg; box.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+    toast(msg, 'error');
+  };
+  ['assetCode', 'assetStart', 'assetEnd'].forEach(function (f) { const b = $('[data-field="' + f + '"]'); if (b) b.classList.remove('has-error'); });
+  if (!code) return showErr('assetCode', '请选择背景图编号');
+  if (enabled) {
+    if (!start) return showErr('assetStart', '开启时请填写开始时间');
+    if (!end) return showErr('assetEnd', '开启时请填写结束时间');
+    if (end <= start) return showErr('assetEnd', '结束时间需晚于开始时间');
+    const conflict = ASSETS.find(function (x) {
+      return x.id !== UI.modal.id && x.enabled && x.start && x.end && start <= x.end && end >= x.start;
+    });
+    if (conflict) {
+      const box = $('[data-field="assetStart"]');
+      if (box) box.classList.add('has-error');
+      toast('时间区间与已开启配置（编号 ' + conflict.code + '：' + conflict.start + ' 至 ' + conflict.end + '）重叠，同一时间仅 1 张可开启', 'error');
+      return;
+    }
+  }
+  const data = { code: code, enabled: enabled, start: start, end: end, updated: NOW };
+  if (UI.modal.id == null) {
+    ASSETS.push(Object.assign({ id: Date.now() }, data));
+    toast('背景配置已添加');
+  } else {
+    Object.assign(ASSETS.find(function (x) { return x.id === UI.modal.id; }), data);
+    toast('背景配置已保存');
+  }
+  closeModal();
+  if (UI.active === 'assets') refreshAssetsPage(); else navigate('assets');
+}
+function openSeriesAudioPicker(i) {
+  const inp = document.createElement('input');
+  inp.type = 'file';
+  inp.accept = 'audio/*,video/mp4';
+  inp.style.display = 'none';
+  document.body.appendChild(inp);
+  inp.addEventListener('change', function () {
+    const f = inp.files && inp.files[0];
+    document.body.removeChild(inp);
+    if (!f) return;
+    if (UI.modal && UI.modal.data && UI.modal.data.seriesItems[i]) {
+      const it = UI.modal.data.seriesItems[i];
+      it.audio = 'https://cdn.navolove.com/resource/sleep/uploads/' + encodeURIComponent(f.name);
+      it.source = 'upload';
+      if (!it.name) it.name = f.name.replace(/\.[^.]+$/, '');
+      UI.modal.seriesErrors = [];
+      renderSeriesRows();
+      toast('音频已上传（原型模拟），链接已回填', 'info');
+    }
+  });
+  inp.click();
+}
+
+/* =========================================================
+   全局事件
+   ========================================================= */
+function readFilterInputs() {
+  UI.filter = {
+    name: ($('#f-name') || {}).value || '',
+    kind: ($('#f-kind') || {}).value || '',
+    legacyType: ($('#f-legacy-type') || {}).value || '',
+    status: ($('#f-status') || {}).value || ''
+  };
+}
+function contentAddMode() { openContentModal(null, 'add'); }
+function copyContent(id) {
+  const src = CONTENT.find(function (c) { return c.id === id; });
+  if (!src) return;
+  const copy = deepCopyContent(src);
+  copy.id = Math.max.apply(null, CONTENT.map(function (c) { return c.id; })) + 1;
+  copy.name = src.name + '（副本）';
+  CONTENT.unshift(copy);
+  refreshContentTable();
+  toast('已复制为内容 ID ' + copy.id);
+}
+
+document.addEventListener('click', function (e) {
+  const closeBtn = e.target.closest('[data-act="modal-close"]');
+  if (closeBtn) { closeModal(); return; }
+  const nav = e.target.closest('[data-nav]');
+  if (nav) { navigate(nav.dataset.nav); return; }
+  const subgroup = e.target.closest('[data-subgroup]');
+  if (subgroup) {
+    const parent = SIDE_MENU.find(function (m) { return m.children; }).children.find(function (c) { return c.key === subgroup.dataset.subgroup; });
+    if (parent) { parent.open = !parent.open; renderSidebar(); }
+    return;
+  }
+  const group = e.target.closest('[data-group]');
+  if (group) {
+    const item = SIDE_MENU.find(function (m) { return m.key === group.dataset.group; });
+    if (item && item.children) { item.open = !item.open; renderSidebar(); }
+    return;
+  }
+  const tabClose = e.target.closest('[data-tab-close]');
+  if (tabClose) {
+    e.stopPropagation();
+    const key = tabClose.dataset.tabClose;
+    UI.tabs = UI.tabs.filter(function (t) { return t.key !== key; });
+    if (UI.active === key) {
+      if (UI.tabs.length) UI.active = UI.tabs[UI.tabs.length - 1].key;
+      else UI.active = null;
+    }
+    if (UI.active) navigate(UI.active);
+    else { renderTabs(); renderBreadcrumb(); $('#content').innerHTML = '<div class="placeholder" style="margin-top:40px"><div class="ph-icon">▤</div><h3>没有打开的页签</h3><p>点击左侧「内容配置管理」下的二级页面重新打开。</p></div>'; }
+    return;
+  }
+  const tabSwitch = e.target.closest('[data-tab-switch]');
+  if (tabSwitch) { navigate(tabSwitch.dataset.tabSwitch); return; }
+  const el = e.target.closest('[data-act]');
+  if (!el) return;
+  const act = el.dataset.act;
+  const id = el.dataset.id != null ? (isNaN(parseInt(el.dataset.id, 10)) ? el.dataset.id : parseInt(el.dataset.id, 10)) : null;
+  switch (act) {
+    case 'content-search': readFilterInputs(); refreshContentTable(); toast('筛选完成，共 ' + filterContent().length + ' 条', 'info'); break;
+    case 'content-reset': UI.filter = { name: '', kind: '', legacyType: '', status: '' }; UI.chapterId = null; navigate('content'); toast('筛选条件已重置', 'info'); break;
+    case 'content-add': contentAddMode(); break;
+    case 'content-refresh': refreshContentTable(); toast('列表已刷新', 'info'); break;
+    case 'edit': openContentModal(id, 'edit'); break;
+    case 'view': { const it = CONTENT.find(function (c) { return c.id === id; }); if (it && it.kind === 'series') { UI.chapterId = id; renderPage(); } else { openContentModal(id, 'view'); } break; }
+    case 'chapter-back': UI.chapterId = null; renderPage(); break;
+    case 'chapter-add': openChapterModal(UI.chapterId, null); break;
+    case 'chapter-edit': openChapterModal(UI.chapterId, parseInt(el.dataset.i, 10)); break;
+    case 'chapter-del': { const se = currentSeries(); if (se) { se.chapters.splice(parseInt(el.dataset.i, 10), 1); toast('小课已删除'); renderPage(); } break; }
+    case 'chapter-save': collectAndSaveChapter(); break;
+    case 'chapter-pick-audio': { const inp = $('#up-chapter-audio-input'); if (inp) inp.click(); break; }
+    case 'copy': copyContent(id); break;
+    case 'content-save': collectAndSaveContent(); break;
+    case 'pick-upload': { const input = $('#up-' + el.dataset.target + '-input'); if (input) input.click(); break; }
+    case 'clear-upload': { if (UI.modal) { UI.modal['upload_' + el.dataset.target] = null; renderUploadPreview(el.dataset.target); const n = $('#up-' + el.dataset.target + '-name'); if (n) n.textContent = ''; updateContentPreviews(); } break; }
+    case 'pick-audio': { const inp = $('#up-audio-input'); if (inp) inp.click(); break; }
+    case 'series-add': { const its = UI.modal.data.seriesItems || (UI.modal.data.seriesItems = []); its.push({ source: 'upload', audio: '', contentId: '', name: '', duration: '', trial: '', cover11: null }); UI.modal.seriesErrors = []; renderSeriesRows(); break; }
+    case 'series-del': { UI.modal.data.seriesItems.splice(parseInt(el.dataset.i, 10), 1); UI.modal.seriesErrors = []; renderSeriesRows(); break; }
+    case 'series-up': { const i = parseInt(el.dataset.i, 10); const its = UI.modal.data.seriesItems; if (i > 0) { const t = its[i - 1]; its[i - 1] = its[i]; its[i] = t; renderSeriesRows(); } break; }
+    case 'series-down': { const i = parseInt(el.dataset.i, 10); const its = UI.modal.data.seriesItems; if (i < its.length - 1) { const t = its[i + 1]; its[i + 1] = its[i]; its[i] = t; renderSeriesRows(); } break; }
+    case 'series-pick-cover': { const inp = document.querySelector('[data-series-file="' + el.dataset.i + '"][data-ck="' + el.dataset.ck + '"]'); if (inp) inp.click(); break; }
+    case 'ref-add': addRefTrack(); break;
+    case 'ref-del': delRefTrack(parseInt(el.dataset.i, 10)); break;
+    case 'ref-up': moveRefTrack(parseInt(el.dataset.i, 10), -1); break;
+    case 'ref-down': moveRefTrack(parseInt(el.dataset.i, 10), 1); break;
+    case 'rank-tab': UI.rankPreview.tab = el.dataset.tab; refreshRankPreview(); break;
+    case 'rank-page': UI.rankPreview.page = parseInt(el.dataset.page, 10); refreshRankPreview(); break;
+    case 'rank-clear': { rankDraft[parseInt(el.dataset.pos, 10) - 1] = { id: '', subtitle: '' }; rankError[parseInt(el.dataset.pos, 10) - 1] = null; refreshRankRow(parseInt(el.dataset.pos, 10)); refreshRankPreview(); break; }
+    case 'rank-save': validateAndSaveRank(); break;
+    case 'search-add': openSearchModal(null); break;
+    case 'search-edit': openSearchModal(id); break;
+    case 'search-toggle': { const s = SEARCH.find(function (x) { return x.id === id; }); if (s) { s.status = s.status === 'on' ? 'off' : 'on'; refreshSearchPage(); toast('「' + s.word + '」已' + (s.status === 'on' ? '启用' : '禁用')); } break; }
+    case 'search-del': { SEARCH = SEARCH.filter(function (x) { return x.id !== id; }); refreshSearchPage(); toast('搜索词已删除'); break; }
+    case 'search-save': saveSearch(); break;
+    case 'search-chip': toast('执行搜索：' + el.dataset.word, 'info'); break;
+    case 'asset-add': openAssetModal(null); break;
+    case 'asset-edit': openAssetModal(id); break;
+    case 'asset-toggle': {
+      const a = ASSETS.find(function (x) { return x.id === id; });
+      if (!a) break;
+      if (!a.enabled) {
+        if (!a.start || !a.end) { toast('请先编辑补充开始/结束时间', 'error'); break; }
+        if (a.end <= a.start) { toast('结束时间需晚于开始时间', 'error'); break; }
+        const conflict = ASSETS.find(function (x) { return x !== a && x.enabled && x.start && x.end && a.start <= x.end && a.end >= x.start; });
+        if (conflict) { toast('与已开启配置（编号 ' + conflict.code + '）时间重叠，同一时间仅 1 张可开启', 'error'); break; }
+        a.enabled = true; a.updated = NOW; refreshAssetsPage(); toast('已开启');
+      } else {
+        a.enabled = false; a.updated = NOW; refreshAssetsPage(); toast('已关闭');
+      }
+      break;
+    }
+    case 'asset-del': { ASSETS = ASSETS.filter(function (x) { return x.id !== id; }); refreshAssetsPage(); toast('背景图已删除'); break; }
+    case 'asset-refresh': refreshAssetsPage(); toast('列表已刷新', 'info'); break;
+    case 'asset-save': saveAsset(); break;
+  }
+});
+document.addEventListener('input', function (e) {
+  const t = e.target;
+  if (t.dataset && t.dataset.ref != null) {
+    const i = parseInt(t.dataset.ref, 10);
+    if (UI.modal && UI.modal.data && UI.modal.data.refTracks && UI.modal.data.refTracks[i]) {
+      const it = UI.modal.data.refTracks[i];
+      it.contentId = t.value;
+      const c = findContent(t.value);
+      it.name = c ? c.name : '';
+      it.duration = c ? (c.audioDuration || '') : '';
+      const row = t.closest('tr');
+      if (row) {
+        const n = row.querySelector('.ref-name-input'); if (n) n.value = it.name;
+        const d = row.querySelector('.ref-dur-input'); if (d) d.value = it.duration;
+      }
+    }
+    return;
+  }
+  if (t.id && /^rank-(id|subtitle)-/.test(t.id)) {
+    const pos = parseInt(t.dataset.rankPos, 10);
+    const k = t.dataset.rankK;
+    rankDraft[pos - 1][k] = t.value;
+    rankError[pos - 1] = null;
+    refreshRankRow(pos);
+    refreshRankPreview();
+    return;
+  }
+  if (t.dataset && t.dataset.series != null) {
+    const i = parseInt(t.dataset.series, 10);
+    const k = t.dataset.k;
+    if (UI.modal && UI.modal.data && UI.modal.data.seriesItems && UI.modal.data.seriesItems[i]) {
+      const it = UI.modal.data.seriesItems[i];
+      it[k] = t.value;
+      if (k === 'contentId') {
+        const c = findContent(t.value);
+        const row = t.closest('tr');
+        if (c && row) {
+          if (!it.name) { it.name = c.name; const n = row.querySelector('[data-k="name"]'); if (n) n.value = it.name; }
+          if (!it.duration) { it.duration = c.audioDuration || ''; const d = row.querySelector('[data-k="duration"]'); if (d) d.value = it.duration; }
+        }
+        const hint = document.getElementById('series-lookup-' + i);
+        if (hint) hint.innerHTML = seriesLookupText(it);
+      }
+    }
+    return;
+  }
+  if (t.id === 'm-intro-body') {
+    const c = document.getElementById('m-body-count');
+    if (c) c.textContent = t.value.replace(/\s/g, '').length;
+  }
+});
+document.addEventListener('change', function (e) {
+  const t = e.target;
+  if (t.dataset && t.dataset.seriesFile != null) {
+    const i = parseInt(t.dataset.seriesFile, 10);
+    const ck = t.dataset.ck;
+    const f = t.files && t.files[0];
+    t.value = '';
+    if (f && UI.modal && UI.modal.data.seriesItems && UI.modal.data.seriesItems[i]) {
+      handleUpload(f, { imgMax: 2, gifMax: 5, videoMax: 20, ratio: 1, ratioLabel: '1:1' }).then(function (res) {
+        UI.modal.data.seriesItems[i][ck] = res;
+        renderSeriesRows();
+        toast('音频卡片封面已上传', 'info');
+      }).catch(function (err) {
+        if (err) toast(err, 'error');
+      });
+    }
+    return;
+  }
+  if (t.dataset && t.dataset.seriesSource != null) {
+    const i = parseInt(t.dataset.seriesSource, 10);
+    if (UI.modal && UI.modal.data && UI.modal.data.seriesItems[i]) {
+      const it = UI.modal.data.seriesItems[i];
+      it.source = t.value;
+      if (it.source === 'contentId' && it.contentId) {
+        const c = findContent(it.contentId);
+        if (c) { if (!it.name) it.name = c.name; if (!it.duration) it.duration = c.audioDuration || ''; }
+      }
+      UI.modal.seriesErrors = [];
+      setTimeout(renderSeriesRows, 0);
+    }
+    return;
+  }
+  if (t.dataset && t.dataset.series != null && t.dataset.k === 'contentId') {
+    const i = parseInt(t.dataset.series, 10);
+    if (UI.modal && UI.modal.data && UI.modal.data.seriesItems[i]) {
+      const it = UI.modal.data.seriesItems[i];
+      const c = findContent(it.contentId);
+      if (c) { if (!it.name) it.name = c.name; if (!it.duration) it.duration = c.audioDuration || ''; }
+      setTimeout(renderSeriesRows, 0);
+    }
+    return;
+  }
+  if (t.closest && t.closest('#modal')) updateContentPreviews();
+});
+document.addEventListener('dblclick', function (e) {
+  const row = e.target.closest('#contentTbody tr[data-row-id]');
+  if (row) {
+    const id = parseInt(row.dataset.rowId, 10);
+    const it = CONTENT.find(function (c) { return c.id === id; });
+    if (it && it.kind === 'series') { UI.chapterId = id; renderPage(); } else openContentModal(id, 'edit');
+  }
+});
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape' && !$('#modalOverlay').classList.contains('hidden')) closeModal();
+});
+$('#modalOverlay').addEventListener('click', function (e) {
+  if (e.target === $('#modalOverlay')) closeModal();
+});
+
+/* =========================================================
+   初始化
+   ========================================================= */
+window.__PROTO__ = {
+  UI: UI,
+  get content() { return CONTENT; },
+  get search() { return SEARCH; },
+  get assets() { return ASSETS; },
+  get ranking() { return RANKING; },
+  navigate: navigate,
+  openContentModal: openContentModal,
+  openSearchModal: openSearchModal,
+  openAssetModal: openAssetModal
+};
+renderSidebar();
+renderTabs();
+renderBreadcrumb();
+UI.active = 'content';
+renderPage();
+})();
+</script>
+</body>
+</html>
