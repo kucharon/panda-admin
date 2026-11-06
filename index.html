@@ -1600,7 +1600,7 @@ function rankPageHTML() {
       '<div style="font-size:13px;color:#4a5563">热门榜单固定 10 个位置（TOP1–TOP10），只需填写 <b>内容 ID</b> 与 <b>副标题</b>（≤10 字，有内容 ID 时必填，可随意填写）；名称、封面、类型自动读取内容配置，保存即生效。</div>' +
       '<div class="q-actions" style="margin-left:auto"><button class="btn primary" data-act="rank-save">保存榜单</button></div>' +
     '</div></div>' +
-    '<div class="card"><div class="card-head"><div class="card-title"><span class="bar"></span>榜单配置 <span class="card-sub">位置 1–10 对应首页 TOP1–TOP10；搜索页热门榜复用前 6 条</span></div></div>' +
+    '<div class="card"><div class="card-head"><div class="card-title"><span class="bar"></span>榜单配置 <span class="card-sub">位置 1–10 对应首页 TOP1–TOP10；搜索页热门榜复用前 5 条</span></div></div>' +
       '<div class="table-wrap"><table class="grid rank-table"><colgroup><col style="width:66px"><col style="width:86px"><col style="width:190px"><col><col style="width:200px"><col style="width:90px"></colgroup>' +
       '<thead><tr><th class="col-center">位置</th><th>TOP 名次</th><th>内容 ID</th><th>内容信息（自动读取）</th><th>副标题</th><th class="col-center">操作</th></tr></thead>' +
       '<tbody id="rankTbody">' + rows + '</tbody></table></div>' +
@@ -1639,8 +1639,8 @@ function rankPreviewBodyHTML() {
       }).join('') + '</div>';
   }
   let items = '';
-  for (let i = 1; i <= 6; i++) items += rankItemHTML(i, { search: true });
-  return '<div class="rp-page-label"><span>搜索页 · 热门榜（前 6 条，不展示副标题）</span><span>复用前 6 个位置</span></div>' + items;
+  for (let i = 1; i <= 5; i++) items += rankItemHTML(i, { search: true });
+  return '<div class="rp-page-label"><span>搜索页 · 热门榜（前 5 条，不展示副标题）</span><span>复用前 5 个位置</span></div>' + items;
 }
 function refreshRankPreview() {
   const body = $('#rankPreviewBody');
