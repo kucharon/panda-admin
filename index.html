@@ -195,7 +195,6 @@ table.grid tbody tr.row-error td{background:#fff1f0}
 .up-preview{width:104px;height:104px;border-radius:6px;border:1px solid #e1e6ee;background:#f2f6fa;display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none;position:relative;color:#b8c0cb;font-size:11.5px;text-align:center;line-height:1.4}
 .up-preview.tall{width:104px;height:132px}
 .up-preview.ratio54{width:140px;height:112px}
-.up-preview.phonebg{width:160px;height:107px}
 .up-preview.cover34{width:96px;height:128px}
 .cover-duo{display:flex;gap:4px;align-items:center}
 .thumb.thumb34{width:28px;height:37px}
@@ -263,51 +262,9 @@ table.grid tbody tr.row-error td{background:#fff1f0}
 .sc-empty{font-size:12px;color:var(--muted2);padding:8px 0}
 
 /* ---------- 页面素材 / 手机预览 ---------- */
-.asset-layout{display:flex;gap:16px;align-items:flex-start}
-.asset-main{flex:1;min-width:0}
-.asset-side{width:360px;flex:none;position:sticky;top:0}
 .platform-tabs{display:flex;gap:6px;padding:10px 14px;border-bottom:1px solid var(--border-light);flex-wrap:wrap}
 .ptab{padding:4px 12px;border:1px solid #d9dfe7;border-radius:14px;font-size:11.5px;color:#5b6675;cursor:pointer;background:#fff}
 .ptab.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-deep);font-weight:600}
-.phone-wrap{display:flex;justify-content:center;padding:16px 14px 8px}
-.phone{width:268px;height:548px;border-radius:26px;background:#0e1830;position:relative;overflow:hidden;box-shadow:0 10px 30px rgba(15,26,42,.22);border:7px solid #1a2438;box-sizing:content-box}
-.phone .ph-screen{position:absolute;inset:0;overflow:hidden;background:#0e1830}
-.ph-bg{position:absolute;left:0;right:0;top:0;height:100%;background:linear-gradient(160deg,#0e1830,#23406b 55%,#5d7fa8)}
-.ph-bg.cover-top{height:46%}
-.ph-hero{position:absolute;left:0;right:0;top:0;aspect-ratio:3/2;height:auto;background:linear-gradient(160deg,#13284a,#3d6d8f 55%,#8fc5b0);}
-.ph-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,12,24,.05),rgba(6,12,24,.55))}
-.ph-content{position:absolute;left:0;right:0;top:0;bottom:0;padding:14px 14px 0;display:flex;flex-direction:column;color:#fff;z-index:3}
-.ph-status{display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,.85);margin-bottom:14px}
-.ph-title{font-size:17px;font-weight:700;letter-spacing:.5px;margin-top:6px}
-.ph-tabs{display:flex;gap:18px;margin-top:14px;font-size:12px}
-.ph-tab{padding-bottom:5px;color:rgba(255,255,255,.6);border-bottom:2px solid transparent}
-.ph-tab.active{color:#fff;border-bottom-color:#fff;font-weight:600}
-.ph-cards{margin-top:16px;display:flex;flex-direction:column;gap:10px}
-.ph-card{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:10px 12px;backdrop-filter:blur(4px)}
-.ph-card .k{font-size:10px;color:rgba(255,255,255,.62)}
-.ph-card .v{font-size:20px;font-weight:700;margin-top:2px}
-.ph-card .v small{font-size:11px;font-weight:400;color:rgba(255,255,255,.7);margin-left:4px}
-.ph-score{display:flex;align-items:center;gap:14px}
-.ph-ring{width:52px;height:52px;border-radius:50%;background:conic-gradient(#79e0d6 0 86%,rgba(255,255,255,.16) 86% 100%);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff}
-.ph-ring span{width:40px;height:40px;border-radius:50%;background:#14243d;display:flex;align-items:center;justify-content:center}
-.ph-bars{margin-top:12px;display:flex;gap:3px;height:44px;align-items:flex-end}
-.ph-bars i{flex:1;display:block;border-radius:2px 2px 0 0;background:rgba(255,255,255,.28)}
-.ph-bars i:nth-child(3n){background:rgba(121,224,214,.65)}
-.ph-overlay{position:absolute;left:0;right:0;bottom:0;height:46%;background:linear-gradient(180deg,rgba(10,18,32,0),#0b1424 55%)}
-.ph-caption{padding:0 16px 14px;font-size:11px;color:var(--muted2);text-align:center;line-height:1.6}
-.asset-code{display:flex;align-items:center;gap:9px}
-.asset-code b{font-size:12.5px;color:#2b3441}
-.asset-thumb-empty{display:flex;align-items:center;justify-content:center;color:#9aa6b5;font-size:11px}
-.preset-grid{display:flex;flex-wrap:wrap;gap:10px}
-.preset-item{width:104px;border:2px solid #e1e6ee;border-radius:6px;overflow:hidden;background:#fff;cursor:pointer;display:block;transition:border-color .12s;position:relative}
-.preset-item:hover{border-color:#b7d9d5}
-.preset-item.checked{border-color:var(--accent);box-shadow:0 0 0 2px rgba(38,166,154,.12)}
-.preset-item input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer;z-index:2}
-.preset-item img{width:100%;height:58px;object-fit:cover;display:block}
-.preset-item span{display:block;text-align:center;padding:4px 0;font-size:12px;color:#43505f}
-.preset-item.checked span{color:var(--accent-deep);font-weight:600}
-.asset-thumb{width:88px;height:59px;border-radius:5px;overflow:hidden;border:1px solid #e1e6ee;background:#f2f6fa;flex:none;position:relative}
-.asset-thumb img{width:100%;height:100%;object-fit:cover;display:block}
 
 /* ---------- 占位页 ---------- */
 .placeholder{background:#fff;border-radius:4px;box-shadow:0 1px 2px rgba(16,30,54,.04);padding:70px 24px;text-align:center}
@@ -459,18 +416,6 @@ function bgArt(idx) {
     + '<path d="M0 420 Q90 380 180 408 T360 396 V640 H0 Z" fill="#050b16" opacity=".55"/></svg>';
   return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
 }
-function bgArt32(idx) {
-  // 报告页顶部头图区 3:2（建议 1500×1000）
-  const p = ART_PALETTES[idx % ART_PALETTES.length];
-  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200" viewBox="0 0 360 240" preserveAspectRatio="xMidYMid slice">'
-    + '<defs><linearGradient id="g" x1="0" y1="0" x2=".5" y2="1"><stop offset="0" stop-color="#0b1528"/><stop offset=".45" stop-color="' + p[0] + '"/><stop offset="1" stop-color="' + p[1] + '"/></linearGradient>'
-    + '<radialGradient id="moon" cx="72%" cy="28%" r="34%"><stop offset="0" stop-color="#f7edc8" stop-opacity=".95"/><stop offset=".5" stop-color="#f7edc8" stop-opacity=".25"/><stop offset="1" stop-color="#f7edc8" stop-opacity="0"/></radialGradient></defs>'
-    + '<rect width="360" height="240" fill="url(#g)"/><rect width="360" height="150" fill="url(#moon)"/>'
-    + '<g fill="#fff" opacity=".75"><circle cx="44" cy="40" r="1.6"/><circle cx="120" cy="28" r="1"/><circle cx="250" cy="52" r="1.4"/><circle cx="310" cy="30" r="1"/></g>'
-    + '<path d="M0 190 Q90 160 180 182 T360 172 V240 H0 Z" fill="#050b16" opacity=".5"/></svg>';
-  return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
-}
-
 /* =========================================================
    基础字典
    ========================================================= */
@@ -623,24 +568,6 @@ let SEARCH = [
   { id: 5, word: '白噪音', suffix: 'none', sort: 5, status: 'off', start: '', end: '' }
 ];
 
-// 客户端本地预置图（原型用生成的本地占位图模拟）
-const PRESET_BGS = ['01', '02', '03', '04', '05', '06'].map(function (code, i) {
-  return { code: code, src: bgArt32(i % 6) };
-});
-function presetSrc(code) {
-  const b = PRESET_BGS.find(function (x) { return x.code === code; });
-  return b ? b.src : null;
-}
-let ASSETS = [
-  { id: 1, code: '01', enabled: true, start: '2026-11-01 00:00', end: '2027-01-31 23:59', updated: '2026-11-03 20:10' },
-  { id: 2, code: '02', enabled: false, start: '2026-08-01 00:00', end: '2026-10-31 23:59', updated: '2026-10-31 18:22' },
-  { id: 3, code: '03', enabled: true, start: '2027-02-01 00:00', end: '2027-03-31 23:59', updated: '2026-10-31 18:20' },
-  { id: 4, code: '04', enabled: false, start: '', end: '', updated: '2026-06-01 09:30' },
-  { id: 5, code: '05', enabled: false, start: '', end: '', updated: '2026-01-01 09:30' }
-];
-
-
-
 /* =========================================================
    全局状态
    ========================================================= */
@@ -680,8 +607,7 @@ const SIDE_MENU = [
       { key: 'content', label: '内容配置（新）', icon: 'doc' },
       { key: 'contentOld', label: '内容配置（旧）', icon: 'doc' },
       { key: 'rank', label: '榜单配置', icon: 'rank' },
-      { key: 'search', label: '搜索发现配置', icon: 'search' },
-      { key: 'assets', label: '睡眠报告背景图', icon: 'image' }
+      { key: 'search', label: '搜索发现配置', icon: 'search' }
     ] },
     { key: 'article', label: '文章配置', icon: 'article' },
     { key: 'dream', label: '解梦配置', icon: 'moon' },
@@ -699,7 +625,6 @@ const PAGES = {
   contentOld: { tab: '内容配置（旧）', crumb: ['主页', '内容配置管理', '课程配置', '内容配置（旧）'], placeholder: '内容配置（旧）' },
   rank: { tab: '榜单配置', crumb: ['主页', '内容配置管理', '课程配置', '榜单配置'] },
   search: { tab: '搜索发现配置', crumb: ['主页', '内容配置管理', '课程配置', '搜索发现配置'] },
-  assets: { tab: '睡眠报告背景图', crumb: ['主页', '内容配置管理', '课程配置', '睡眠报告背景图'] },
   article: { tab: '文章配置', crumb: ['主页', '内容配置管理', '文章配置'], placeholder: '文章配置' },
   dream: { tab: '解梦配置', crumb: ['主页', '内容配置管理', '解梦配置'], placeholder: '解梦配置' },
   quote: { tab: '每日寄语', crumb: ['主页', '内容配置管理', '每日寄语'], placeholder: '每日寄语' }
@@ -735,6 +660,7 @@ function renderSidebar() {
   $('#sidebar').innerHTML = html;
 }
 function renderTabs() {
+  UI.tabs = UI.tabs.filter(function (t) { return !!PAGES[t.key]; });
   $('#tabbar').innerHTML = UI.tabs.map(function (t) {
     return '<span class="tab' + (t.key === UI.active ? ' active' : '') + '" data-tab-switch="' + t.key + '">' + esc(t.title) +
       '<span class="x" data-tab-close="' + t.key + '">×</span></span>';
@@ -771,13 +697,11 @@ function renderPage() {
   if (key === 'content') slot.innerHTML = UI.chapterId ? chapterPageHTML() : contentPageHTML();
   else if (key === 'rank') slot.innerHTML = rankPageHTML();
   else if (key === 'search') slot.innerHTML = searchPageHTML();
-  else if (key === 'assets') slot.innerHTML = assetsPageHTML();
   else slot.innerHTML = placeholderHTML(PAGES[key].placeholder);
   slot.scrollTop = 0;
   if (key === 'content') { if (UI.chapterId) bindChapterPage(); else bindContentPage(); }
   if (key === 'rank') bindRankPage();
   if (key === 'search') bindSearchPage();
-  if (key === 'assets') bindAssetsPage();
 }
 function placeholderHTML(name) {
   return '<div class="page"><div class="placeholder"><div class="ph-icon">⧉</div><h3>' + esc(name) + '</h3>' +
@@ -969,7 +893,6 @@ const UPLOAD_LIMIT = {
   c11: { imgMax: 2, gifMax: 5, videoMax: 20, ratio: 1, ratioLabel: '1:1' },
   introBg: { imgMax: 3, gifMax: 5, videoMax: 20, ratio: 5 / 4, ratioLabel: '5:4' },
   recBg: { imgMax: 3, gifMax: 5, videoMax: 20, ratio: 5 / 4, ratioLabel: '5:4' },
-  bg: { imgMax: 3, ratio: 3 / 2, ratioLabel: '3:2' },
   icon: { imgMax: 0.3, ratio: 1, ratioLabel: '1:1', types: ['image/png', 'image/svg+xml'], typeLabel: 'PNG / SVG' },
   wnCover: { imgMax: 2, gifMax: 5 },
   legacyCover: { imgMax: 2, gifMax: 5 },
@@ -1036,7 +959,7 @@ function renderUploadPreview(target) {
     ? (media.video
       ? '<video src="' + esc(media.src) + '" muted loop autoplay playsinline></video><span class="up-badge">视频预览</span>'
       : '<img src="' + esc(media.src) + '" alt=""><span class="up-badge">图片预览</span>')
-    : ({ c34: '点击上传<br>3:4 竖版', c11: '点击上传<br>1:1 方形', introBg: '点击上传<br>5:4 横版', recBg: '点击上传<br>5:4 横版', bg: '点击上传<br>3:2 横版', icon: '点击上传<br>图标 PNG/SVG', wnCover: '点击上传<br>白噪音封面', legacyCover: '点击上传<br>封面图', chapterCover: '点击上传<br>小课封面', chapterCover11: '点击上传<br>1:1 封面' }[target] || '点击上传');
+    : ({ c34: '点击上传<br>3:4 竖版', c11: '点击上传<br>1:1 方形', introBg: '点击上传<br>5:4 横版', recBg: '点击上传<br>5:4 横版', icon: '点击上传<br>图标 PNG/SVG', wnCover: '点击上传<br>白噪音封面', legacyCover: '点击上传<br>封面图', chapterCover: '点击上传<br>小课封面', chapterCover11: '点击上传<br>1:1 封面' }[target] || '点击上传');
 }
 function bindUploadInput(target, limits, onDone) {
   const input = $('#up-' + target + '-input');
@@ -1189,7 +1112,6 @@ function contentModalHTML(data, mode) {
         '<div class="fgrid">' +
           '<div class="fitem" data-field="audio"><div class="label"><span class="req">*</span>音视频地址</div><div style="display:flex;gap:8px"><input type="text" id="m-audio" value="' + esc(data.audioUrl || '') + '" placeholder="https://… .mp3 / .mp4"' + dis + '><button class="btn sm primary" data-act="pick-audio"' + (ro ? ' disabled' : '') + '>上传</button><input type="file" id="up-audio-input" accept="audio/*,video/mp4" hidden></div><div class="hint">支持 mp3 / mp4，上传后回填链接</div><div class="err-msg">请填写音视频地址</div></div>' +
           '<div class="fitem"><div class="label">音视频时长</div><input type="text" id="m-duration" value="' + esc(data.audioDuration || '') + '" placeholder="如 12:30"' + dis + '></div>' +
-          '<div class="fitem"><div class="label">试听时长</div><input type="text" id="m-trial" value="' + esc(data.trialDuration || '') + '" placeholder="如 03:00"' + dis + '></div>' +
         '</div></div>' +
       /* 追加新字段：多比例封面 + 白噪音素材 */
       '<div class="form-section" id="m-cover-section"><div class="section-head"><span class="sec-bar"></span>多比例封面（新增字段）<span class="sec-tip" id="m-cover-tip">单曲：3:4/1:1/介绍页背景必填，今日推荐背景选填</span></div>' +
@@ -1457,7 +1379,7 @@ function collectAndSaveContent() {
     homeFeaturedSort: homeFeatured ? (parseInt(($('#m-home-featured-sort') || {}).value, 10) || 0) : 0,
     audioUrl: (isSeries || isFeaturedWhite) ? '' : audioInputValue().trim(),
     audioDuration: (isSeries || isFeaturedWhite) ? '' : (($('#m-duration') || {}).value || ''),
-    trialDuration: (isSeries || isFeaturedWhite) ? '' : (($('#m-trial') || {}).value || ''),
+    trialDuration: '',
     type: legacyType, sub: legacySub, legacySub: legacySub, effectMain: effectMain,
     cover34: (isSeries || (!isWhite)) ? uploadedC34 : null,
     cover11: (isSeries || (!isWhite)) ? uploadedC11 : null,
@@ -1812,169 +1734,6 @@ function saveSearch() {
 }
 
 /* =========================================================
-   睡眠报告背景图（客户端本地预置图 + 后台编号配置）
-   ========================================================= */
-function presetThumbHTML(code) {
-  const src = presetSrc(code);
-  return src
-    ? '<div class="asset-thumb"><img src="' + esc(src) + '" alt=""></div>'
-    : '<div class="asset-thumb asset-thumb-empty">占位</div>';
-}
-function assetRowsHTML() {
-  if (!ASSETS.length) return '<tr><td colspan="6"><div class="empty-tip">暂无背景图配置，点击「添加背景配置」新增</div></td></tr>';
-  return ASSETS.map(function (a) {
-    return '<tr data-asset-id="' + a.id + '">' +
-      '<td><div class="asset-code">' + presetThumbHTML(a.code) + '<b>编号 ' + esc(a.code || '—') + '</b></div></td>' +
-      '<td><span class="' + (a.enabled ? 'status-on' : 'status-off') + '">' + (a.enabled ? '是' : '否') + '</span></td>' +
-      '<td>' + esc(a.start || '—') + '</td>' +
-      '<td>' + esc(a.end || '—') + '</td>' +
-      '<td>' + esc(a.updated || '—') + '</td>' +
-      '<td><div class="ops"><a data-act="asset-edit" data-id="' + a.id + '">编辑</a><a data-act="asset-toggle" data-id="' + a.id + '">' + (a.enabled ? '关闭' : '开启') + '</a><a class="danger" data-act="asset-del" data-id="' + a.id + '">删除</a></div></td></tr>';
-  }).join('');
-}
-function computeEffective() {
-  const inRange = function (a) {
-    if (!a.enabled) return false;
-    if (!a.start || !a.end) return false;
-    if (a.start > NOW) return false;
-    if (a.end < NOW) return false;
-    return true;
-  };
-  const list = ASSETS.filter(inRange).sort(function (a, b) { return a.updated < b.updated ? 1 : -1; });
-  return list[0] || null;
-}
-function phoneHTML() {
-  const effective = computeEffective();
-  const src = effective ? presetSrc(effective.code) : null;
-  const bgStyle = src ? 'background-image:url("' + src + '");background-size:cover;background-position:center center;' : '';
-  return '<div class="phone"><div class="ph-screen">' +
-    '<div class="ph-bg"></div>' + (src ? '<div class="ph-hero" style="' + bgStyle + '"></div>' : '<div class="ph-hero"></div>') + '<div class="ph-overlay"></div>' +
-    '<div class="ph-content">' +
-      '<div class="ph-status"><span>9:41</span><span>●●●  ▮</span></div>' +
-      '<div class="ph-title">睡眠报告</div>' +
-      '<div class="ph-tabs"><span class="ph-tab active">日报告</span><span class="ph-tab">睡眠趋势</span></div>' +
-      '<div class="ph-cards">' +
-        '<div class="ph-card"><div class="k">昨夜睡眠时长</div><div class="v">7<small>小时</small> 32<small>分</small></div></div>' +
-        '<div class="ph-card"><div class="ph-score"><div class="ph-ring"><span>86</span></div><div><div class="k">睡眠评分</div><div class="v" style="font-size:15px">优于 78% 的用户</div></div></div><div class="ph-bars">' +
-          [22, 40, 18, 30, 34, 46, 26, 20, 38, 48, 22, 16].map(function (h) { return '<i style="height:' + h + 'px"></i>'; }).join('') +
-        '</div></div>' +
-      '</div>' +
-    '</div></div></div>';
-}
-function assetPreviewCardHTML() {
-  const effective = computeEffective();
-  const caption = effective
-    ? '当前生效：编号 <b>' + esc(effective.code) + '</b> · 客户端读取本地预置图<br><span>' + esc(effective.start) + ' 至 ' + esc(effective.end) + '</span>'
-    : '默认背景（当前无生效配置；未开启 / 未到时间 / 已过期 / 加载失败时，客户端使用内置默认图）';
-  return '<div class="preview-card"><div class="pc-head"><div class="pc-title"><span class="bar"></span>前台预览 · 睡眠报告页</div><span class="card-sub" style="font-size:11px">实时生效</span></div>' +
-    '<div class="phone-wrap" id="phoneWrap">' + phoneHTML() + '</div>' +
-    '<div class="ph-caption" id="assetCaption">' + caption + '</div></div>';
-}
-function assetsPageHTML() {
-  return '<div class="page"><div class="asset-layout"><div class="asset-main">' +
-    '<div class="card"><div class="card-head"><div class="card-title"><span class="bar"></span>睡眠报告背景图 <span class="card-sub">客户端本地预置图，服务端下发生效编号；同一时间仅 1 张开启；当前共 ' + ASSETS.length + ' 条配置</span></div>' +
-      '<div class="head-actions"><button class="btn sm" data-act="asset-refresh">刷新</button><button class="btn primary" data-act="asset-add">＋ 添加背景配置</button></div></div>' +
-      '<div class="table-wrap"><table class="grid"><colgroup><col style="width:150px"><col style="width:90px"><col style="width:150px"><col style="width:150px"><col style="width:140px"><col style="width:160px"></colgroup>' +
-      '<thead><tr><th>编号</th><th>是否开启</th><th>开始时间</th><th>结束时间</th><th>更新时间</th><th>操作</th></tr></thead>' +
-      '<tbody id="assetTbody">' + assetRowsHTML() + '</tbody></table></div>' +
-      '<div class="card-foot-note">背景图为客户端本地预置图（编号 01/02/03…），后台只配置编号与生效时间；服务端下发当前生效编号，客户端读取本地图展示；未开启/未到时间/已过期/加载失败时使用客户端默认背景。</div>' +
-    '</div></div>' +
-    '<aside class="asset-side" id="assetSide">' + assetPreviewCardHTML() + '</aside></div></div>';
-}
-function bindAssetsPage() {}
-function refreshAssetsPage() {
-  const tb = $('#assetTbody'); if (tb) tb.innerHTML = assetRowsHTML();
-  const side = $('#assetSide'); if (side) side.innerHTML = assetPreviewCardHTML();
-}
-function openAssetModal(id) {
-  const isEdit = id != null;
-  const a = isEdit ? ASSETS.find(function (x) { return x.id === id; }) : { code: '', enabled: false, start: '', end: '' };
-  if (!a) return;
-  const radio = function (name, val, cur, label) { return '<label><input type="radio" name="' + name + '" value="' + val + '"' + (cur === val ? ' checked' : '') + '>' + label + '</label>'; };
-  const presets = PRESET_BGS.map(function (b) {
-    return '<label class="preset-item' + (a.code === b.code ? ' checked' : '') + '"><input type="radio" name="a-code" value="' + b.code + '"' + (a.code === b.code ? ' checked' : '') + '><img src="' + b.src + '" alt=""><span>编号 ' + b.code + '</span></label>';
-  }).join('');
-  openModal({
-    ctx: { type: 'asset', id: id },
-    title: isEdit ? '编辑背景配置' : '添加背景配置',
-    wide: true,
-    body: '<div class="fgrid" style="padding-top:14px">' +
-      '<div class="fitem full" data-field="assetCode"><div class="label"><span class="req">*</span>背景图编号</div><div class="preset-grid">' + presets + '</div><div class="hint">选择客户端本地预置图编号；服务端仅下发编号，客户端读取本地图</div><div class="err-msg">请选择背景图编号</div></div>' +
-      '<div class="fitem"><div class="label"><span class="req">*</span>是否开启</div><div class="radio-row">' + radio('a-enabled', '是', a.enabled ? '是' : '否', '是') + radio('a-enabled', '否', a.enabled ? '是' : '否', '否') + '</div></div>' +
-      '<div class="fitem" data-field="assetStart"><div class="label">开始时间</div><input type="datetime-local" id="a-start" value="' + esc((a.start || '').replace(' ', 'T')) + '"><div class="hint">是否开启=是时必填</div><div class="err-msg">开启时请填写开始时间</div></div>' +
-      '<div class="fitem" data-field="assetEnd"><div class="label">结束时间</div><input type="datetime-local" id="a-end" value="' + esc((a.end || '').replace(' ', 'T')) + '"><div class="hint">开启时必填，且需晚于开始时间</div><div class="err-msg">开启时请填写结束时间，且需晚于开始时间</div></div>' +
-    '</div>',
-    footer: '<button class="btn" data-act="modal-close">取消</button><button class="btn primary" data-act="asset-save">保存</button>',
-    onMount: function () {
-      $$('#modal input[name="a-code"]').forEach(function (r) {
-        r.addEventListener('change', function () {
-          $$('#modal .preset-item').forEach(function (p) { p.classList.toggle('checked', !!p.querySelector('input').checked); });
-        });
-      });
-    }
-  });
-}
-function saveAsset() {
-  const code = (($('#modal input[name="a-code"]:checked') || {}).value) || '';
-  const enabled = (($('#modal input[name="a-enabled"]:checked') || {}).value) === '是';
-  const start = ($('#a-start').value || '').replace('T', ' ');
-  const end = ($('#a-end').value || '').replace('T', ' ');
-  const showErr = function (field, msg, el) {
-    const box = $('[data-field="' + field + '"]');
-    if (box) { box.classList.add('has-error'); const e = box.querySelector('.err-msg'); if (e && msg) e.textContent = msg; box.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
-    toast(msg, 'error');
-  };
-  ['assetCode', 'assetStart', 'assetEnd'].forEach(function (f) { const b = $('[data-field="' + f + '"]'); if (b) b.classList.remove('has-error'); });
-  if (!code) return showErr('assetCode', '请选择背景图编号');
-  if (enabled) {
-    if (!start) return showErr('assetStart', '开启时请填写开始时间');
-    if (!end) return showErr('assetEnd', '开启时请填写结束时间');
-    if (end <= start) return showErr('assetEnd', '结束时间需晚于开始时间');
-    const conflict = ASSETS.find(function (x) {
-      return x.id !== UI.modal.id && x.enabled && x.start && x.end && start <= x.end && end >= x.start;
-    });
-    if (conflict) {
-      const box = $('[data-field="assetStart"]');
-      if (box) box.classList.add('has-error');
-      toast('时间区间与已开启配置（编号 ' + conflict.code + '：' + conflict.start + ' 至 ' + conflict.end + '）重叠，同一时间仅 1 张可开启', 'error');
-      return;
-    }
-  }
-  const data = { code: code, enabled: enabled, start: start, end: end, updated: NOW };
-  if (UI.modal.id == null) {
-    ASSETS.push(Object.assign({ id: Date.now() }, data));
-    toast('背景配置已添加');
-  } else {
-    Object.assign(ASSETS.find(function (x) { return x.id === UI.modal.id; }), data);
-    toast('背景配置已保存');
-  }
-  closeModal();
-  if (UI.active === 'assets') refreshAssetsPage(); else navigate('assets');
-}
-function openSeriesAudioPicker(i) {
-  const inp = document.createElement('input');
-  inp.type = 'file';
-  inp.accept = 'audio/*,video/mp4';
-  inp.style.display = 'none';
-  document.body.appendChild(inp);
-  inp.addEventListener('change', function () {
-    const f = inp.files && inp.files[0];
-    document.body.removeChild(inp);
-    if (!f) return;
-    if (UI.modal && UI.modal.data && UI.modal.data.seriesItems[i]) {
-      const it = UI.modal.data.seriesItems[i];
-      it.audio = 'https://cdn.navolove.com/resource/sleep/uploads/' + encodeURIComponent(f.name);
-      it.source = 'upload';
-      if (!it.name) it.name = f.name.replace(/\.[^.]+$/, '');
-      UI.modal.seriesErrors = [];
-      renderSeriesRows();
-      toast('音频已上传（原型模拟），链接已回填', 'info');
-    }
-  });
-  inp.click();
-}
-
-/* =========================================================
    全局事件
    ========================================================= */
 function readFilterInputs() {
@@ -2070,25 +1829,6 @@ document.addEventListener('click', function (e) {
     case 'search-del': { SEARCH = SEARCH.filter(function (x) { return x.id !== id; }); refreshSearchPage(); toast('搜索词已删除'); break; }
     case 'search-save': saveSearch(); break;
     case 'search-chip': toast('执行搜索：' + el.dataset.word, 'info'); break;
-    case 'asset-add': openAssetModal(null); break;
-    case 'asset-edit': openAssetModal(id); break;
-    case 'asset-toggle': {
-      const a = ASSETS.find(function (x) { return x.id === id; });
-      if (!a) break;
-      if (!a.enabled) {
-        if (!a.start || !a.end) { toast('请先编辑补充开始/结束时间', 'error'); break; }
-        if (a.end <= a.start) { toast('结束时间需晚于开始时间', 'error'); break; }
-        const conflict = ASSETS.find(function (x) { return x !== a && x.enabled && x.start && x.end && a.start <= x.end && a.end >= x.start; });
-        if (conflict) { toast('与已开启配置（编号 ' + conflict.code + '）时间重叠，同一时间仅 1 张可开启', 'error'); break; }
-        a.enabled = true; a.updated = NOW; refreshAssetsPage(); toast('已开启');
-      } else {
-        a.enabled = false; a.updated = NOW; refreshAssetsPage(); toast('已关闭');
-      }
-      break;
-    }
-    case 'asset-del': { ASSETS = ASSETS.filter(function (x) { return x.id !== id; }); refreshAssetsPage(); toast('背景图已删除'); break; }
-    case 'asset-refresh': refreshAssetsPage(); toast('列表已刷新', 'info'); break;
-    case 'asset-save': saveAsset(); break;
   }
 });
 document.addEventListener('input', function (e) {
@@ -2208,12 +1948,11 @@ window.__PROTO__ = {
   UI: UI,
   get content() { return CONTENT; },
   get search() { return SEARCH; },
-  get assets() { return ASSETS; },
   get ranking() { return RANKING; },
   navigate: navigate,
   openContentModal: openContentModal,
   openSearchModal: openSearchModal,
-  openAssetModal: openAssetModal
+
 };
 renderSidebar();
 renderTabs();
