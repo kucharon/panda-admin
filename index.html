@@ -769,12 +769,14 @@ function featuredMerge(item) {
 }
 function contentRowHTML(item) {
   const isSeries = item.kind === 'series';
-  const kindText = (item.legacyType === '白噪音' && item.legacySub === '精选白噪音') ? ('精选白噪音 · ' + ((item.refTracks || []).length) + ' 条音频') : (isSeries ? ('系列课 · ' + ((item.chapters || []).length) + ' 个小课') : '单课');
+  const isFeaturedWhiteRow = item.legacyType === '白噪音' && item.legacySub === '精选白噪音';
+  const kindText = isFeaturedWhiteRow ? ('精选白噪音 · ' + ((item.refTracks || []).length) + ' 条音频') : (isSeries ? ('系列课 · ' + ((item.chapters || []).length) + ' 个小课') : '单课');
+  const kindTagCls = isFeaturedWhiteRow ? 'tag-orange' : (isSeries ? 'tag-blue' : 'tag-gray');
   const permTag = item.permission === '免费' ? '<span class="tag tag-gray">免费</span>' : '<span class="tag tag-blue">' + esc(item.permission) + '</span>';
   return '<tr data-row-id="' + item.id + '">' +
     '<td class="mono">' + item.id + '</td>' +
     '<td><b>' + esc(item.name) + '</b></td>' +
-    '<td><span class="tag ' + (isSeries ? 'tag-blue' : 'tag-gray') + '">' + kindText + '</span></td>' +
+    '<td><span class="tag ' + kindTagCls + '">' + kindText + '</span></td>' +
     '<td><span class="tag tag-dark">' + esc(item.legacyType) + '</span></td>' +
     '<td>' + (item.legacySub ? '<span class="tag tag-gray">' + esc(item.legacySub) + '</span>' : '<span class="muted">—</span>') + '</td>' +
     '<td>' + listCoverFor(item) + '</td>' +
