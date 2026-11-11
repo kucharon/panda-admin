@@ -423,17 +423,19 @@ const TYPES = ['白噪音', '助眠冥想', '睡前故事', '钵音疗愈', '深
 const EFFECTS = ['快速入睡', '提升深睡', '舒缓心绪', '遮蔽杂音', '放松身体', '陪伴入眠', '专注'];
 const LEGACY_TYPES = ['助眠冥想', '舒眠音乐', '睡前故事', '钵音疗愈', '深睡眠脑波', '白噪音'];
 const LEGACY_SUBTYPES = {
-  '助眠冥想': ['可视化冥想', '呼吸觉察', '身体扫描'],
+  '助眠冥想': ['快速入睡', '新手入门', '可视化冥想', '呼吸觉察', '身体扫描'],
   '舒眠音乐': ['轻柔钢琴', '雨声音乐', '竖琴', '摇篮曲', '氛围音乐', '轻柔器乐'],
   '睡前故事': ['晚安电台', '宝宝哄睡', '哄睡放松'],
   '钵音疗愈': [],
-  '深睡眠脑波': ['Delta波', 'Theta波', 'Alpha波', '疗愈频率', 'Beta波'],
+  '深睡眠脑波': ['深睡Delta波', '专注Theta波', '专注Beta波', '减压Alpha波', '疗愈频率'],
   '白噪音': ['课堂', '雨声', '哄睡', '大自然声', '城市', '沉浸音效', '生活之声', '动物', '电子噪音']
 };
-const COLLECTIONS = {
-  '助眠冥想': ['快速入睡', '新手入门'],
-  '深睡眠脑波': ['深度睡眠']
+const BRAIN_SUB_MAP = {
+  '深度睡眠': '深睡Delta波', 'Delta波': '深睡Delta波', '深睡Delta波': '深睡Delta波',
+  'Theta波': '专注Theta波', 'Beta波': '专注Beta波', 'Alpha波': '减压Alpha波',
+  '疗愈频率': '疗愈频率'
 };
+const AID_SUB_MAP = { '正念冥想': '可视化冥想', '情绪安抚': '呼吸觉察' };
 const LEGACY_TYPE_COMPAT = { '白噪音': '白噪音', '助眠冥想': '助眠冥想', '睡前故事': '睡前故事', '深睡眠脑波': '深睡眠脑波', '舒眠音乐': '舒眠音乐', '钵音疗愈': '钵音疗愈', '沉浸式哄睡': '沉浸式哄睡' };
 const PERMISSIONS = ['免费', 'VIP', 'SVIP'];
 const FEATURED_SLOT = { '白噪音': '精选混音', '舒眠音乐': '精选音乐', '睡前故事': '精选故事', '钵音疗愈': '精选钵音' };
@@ -486,24 +488,20 @@ CONTENT.forEach(function (c) {
   }
 });
 
-// 旧课程类型 + 小分类 + 合集分类（直接复用现有后台字段）
+// 旧课程类型 + 小分类（旧值同步映射到新名称）
 CONTENT.forEach(function (c) {
   c.legacyType = LEGACY_TYPES.indexOf(c.type) >= 0 ? c.type : (LEGACY_TYPE_COMPAT[c.type] || '白噪音');
   const subs = LEGACY_SUBTYPES[c.legacyType] || [];
-  const colls = COLLECTIONS[c.legacyType] || [];
-  c.collections = (c.collections || []).filter(function (x) { return colls.indexOf(x) >= 0; });
-  const cur = c.legacySub || c.sub || '';
-  if (cur && colls.indexOf(cur) >= 0 && c.collections.indexOf(cur) < 0) c.collections.push(cur);
+  let cur = c.legacySub || c.sub || '';
+  if (c.legacyType === '深睡眠脑波') cur = BRAIN_SUB_MAP[cur] || cur;
+  if (c.legacyType === '助眠冥想') cur = AID_SUB_MAP[cur] || cur;
   if (!subs.length) {
     c.legacySub = '';
-  } else if (c.legacySub && subs.indexOf(c.legacySub) >= 0) {
-    // keep
-  } else if (c.sub && subs.indexOf(c.sub) >= 0) {
-    c.legacySub = c.sub;
+  } else if (cur && subs.indexOf(cur) >= 0) {
+    c.legacySub = cur;
   } else {
     c.legacySub = subs[0];
   }
-  if (c.legacySub && colls.indexOf(c.legacySub) >= 0) c.legacySub = subs[0];
 });
 
 // 白噪音：是否精选=是 → 精选白噪音头部（白噪音封面 + 2–7 条音频）；否则普通白噪音
@@ -788,7 +786,7 @@ function contentRowHTML(item) {
     '<td><b>' + esc(item.name) + '</b></td>' +
     '<td><span class="tag ' + kindTagCls + '">' + kindText + '</span></td>' +
     '<td><span class="tag tag-dark">' + esc(item.legacyType) + '</span></td>' +
-    '<td>' + (isFeaturedWhiteRow ? '<span class="muted">—</span>' : '<div class="tag-group">' + (item.legacySub ? '<span class="tag tag-gray">' + esc(item.legacySub) + '</span>' : '') + (item.collections || []).map(function (x) { return '<span class="tag tag-plus">' + esc(x) + '</span>'; }).join('') + (!item.legacySub && !(item.collections || []).length ? '<span class="muted">—</span>' : '') + '</div>') + '</td>' +
+    '<td>' + (isFeaturedWhiteRow ? '<span class="muted">—</span>' : (item.legacySub ? '<span class="tag tag-gray">' + esc(item.legacySub) + '</span>' : '<span class="muted">—</span>')) + '</td>' +
     '<td>' + listCoverFor(item) + '</td>' +
     '<td>' + permTag + '</td>' +
     '<td>' + featuredMerge(item) + '</td>' +
@@ -1011,7 +1009,7 @@ function emptyContent() {
     introTitle: '', introBody: '', effectMain: '提升深睡', permission: 'VIP', status: 'on',
     newDate: '', sort: 0, sku: '', audioUrl: '', audioDuration: '', trialDuration: '', color: '',
     seriesItems: [], topFeatured: false, homeFeatured: false,
-    legacyDesc: '', legacyCover: null, legacyType: '深睡眠脑波', legacySub: 'Delta波', collections: [], isFree: false, isNew: false,
+    legacyDesc: '', legacyCover: null, legacyType: '深睡眠脑波', legacySub: '深睡Delta波', isFree: false, isNew: false,
     memberPlan: '无', legacyStatus: '已上架', newEnd: '', chapters: [], refTracks: [], wnCover: null, icon: null, featuredSort: 0, homeFeaturedSort: 0
   };
 }
@@ -1097,8 +1095,6 @@ function contentModalHTML(data, mode) {
   const isSeries = data.kind === 'series';
   const title = (mode === 'add' ? '添加内容' : mode === 'edit' ? '编辑内容' : '查看内容');
   const radioHtml = function (name, val, cur, label) { return radio(name, val, cur, ro) + '<span style="margin-right:14px"></span>'; };
-  const collChecked = data.collections || [];
-  const collHTML = function (type) { return (COLLECTIONS[type] || []).map(function (x) { return '<label><input type="checkbox" name="m-collection" value="' + esc(x) + '"' + (collChecked.indexOf(x) >= 0 ? ' checked' : '') + (ro ? ' disabled' : '') + '>' + esc(x) + '</label>'; }).join(''); };
   return {
     title: title, wide: true,
     body:
@@ -1112,7 +1108,6 @@ function contentModalHTML(data, mode) {
           '<div class="fitem full" id="m-kind-item"><div class="label"><span class="req">*</span>课程分类</div><div class="radio-row" id="m-kind-row">' + radioHtml('m-kind', '单课', isSeries ? '系列课' : '单课', '单课') + radioHtml('m-kind', '系列课', isSeries ? '系列课' : '单课', '系列课') + '</div><div class="hint">系列课保存后在列表点「查看」进入系列课内容配置添加小课</div></div>' +
           '<div class="fitem full"><div class="label"><span class="req">*</span>课程类型</div><div class="radio-row" id="m-legacy-type-row">' + LEGACY_TYPES.map(function (t) { return radio('m-legacy-type', t, data.legacyType, ro); }).join('') + '</div></div>' +
           '<div class="fitem full" id="m-legacy-sub-item" data-field="legacySub"><div class="label"><span class="req">*</span>小分类</div><div class="radio-row" id="m-legacy-sub-row">' + (LEGACY_SUBTYPES[data.legacyType] || []).map(function (x) { return radio('m-legacy-sub', x, data.legacySub, ro); }).join('') + '</div><div class="err-msg">请选择小分类</div></div>' +
-          '<div class="fitem full" id="m-collections-item"' + ((COLLECTIONS[data.legacyType] || []).length ? '' : ' style="display:none"') + '><div class="label">合集分类（选填）</div><div class="radio-row" id="m-collection-row">' + collHTML(data.legacyType) + '</div><div class="hint">可多选，可与小分类交叉；仅助眠冥想/深睡眠脑波适用</div></div>' +
           '<div class="fitem" id="m-effect-item" data-field="effectMain"><div class="label"><span class="req">*</span>主功效</div><select id="m-effect-main"' + dis + '>' + optionList(EFFECTS, data.effectMain) + '</select><div class="err-msg">请选择主功效</div></div>' +
           '<div class="fitem" id="m-featured-item"><div class="label"><span class="req">*</span>是否精选</div><div class="radio-row">' + radio('m-featured', '是', data.topFeatured ? '是' : '否', ro) + radio('m-featured', '否', data.topFeatured ? '是' : '否', ro) + '</div><div class="hint" id="m-featured-map"></div></div>' +
           '<div class="fitem" id="m-home-featured-item"><div class="label"><span class="req">*</span>是否推荐页精选</div><div class="radio-row">' + radio('m-home-featured', '是', data.homeFeatured ? '是' : '否', ro) + radio('m-home-featured', '否', data.homeFeatured ? '是' : '否', ro) + '</div></div>' +
@@ -1203,11 +1198,6 @@ function mountContentModal(item, mode, view, chapterCtx) {
       if (subItem) subItem.style.display = subs.length ? '' : 'none';
       UI.modal.data.legacyType = t.value;
       UI.modal.data.legacySub = subs[0] || '';
-      const colls = COLLECTIONS[t.value] || [];
-      const collRow = $('#m-collection-row');
-      if (collRow) collRow.innerHTML = colls.map(function (x) { return '<label><input type="checkbox" name="m-collection" value="' + esc(x) + '">' + esc(x) + '</label>'; }).join('');
-      const collItem = $('#m-collections-item');
-      if (collItem) collItem.style.display = colls.length ? '' : 'none';
       syncContentBranch(); updateIntroTagPreview();
     } else if (t.name === 'm-legacy-sub') {
       UI.modal.data.legacySub = t.value;
@@ -1258,7 +1248,6 @@ function syncContentBranch() {
   show('#m-introBg-item', !isFeaturedWhite && (isSeries || !isWhite));
   show('#m-recBg-item', !isFeaturedWhite && !isSeries && !isWhite);
   show('#m-intro-section', !isFeaturedWhite && !isWhite);
-  show('#m-collections-item', !isFeaturedWhite && (COLLECTIONS[type] || []).length > 0);
   show('#m-wnCover-item', isFeaturedWhite);
   const featureAllowed = !isSeries && !!FEATURED_SLOT[type];
   if (!featureAllowed) {
@@ -1311,7 +1300,6 @@ function collectAndSaveContent() {
   const effectMain = isFeaturedWhite ? (modal.data.effectMain || '提升深睡') : (($('#m-effect-main') || {}).value || '');
   const permission = (($('#modal input[name="m-permission"]:checked') || {}).value) || '免费';
   const homeYes = (($('#modal input[name="m-home-featured"]:checked') || {}).value) === '是';
-  const selectedCollections = (typeof $$ !== 'undefined' ? $$('#modal input[name="m-collection"]:checked') : []).map(function (el) { return el.value; }).filter(function (v) { return (COLLECTIONS[legacyType] || []).indexOf(v) >= 0; });
   const featuredYes = (($('#modal input[name="m-featured"]:checked') || {}).value) === '是';
   const uploadedC34 = modal.upload_c34, uploadedC11 = modal.upload_c11, uploadedIntroBg = modal.upload_introBg, uploadedRecBg = modal.upload_recBg;
   const uploadedIcon = modal.upload_icon, uploadedWnCover = modal.upload_wnCover;
@@ -1358,7 +1346,7 @@ function collectAndSaveContent() {
     audioUrl: (isSeries || isFeaturedWhite) ? '' : ($('#m-audio').value || '').trim(),
     audioDuration: (isSeries || isFeaturedWhite) ? '' : (($('#m-duration') || {}).value || ''),
     trialDuration: '',
-    type: legacyType, sub: isFeaturedWhite ? (keep.legacySub || ((LEGACY_SUBTYPES[legacyType] || [])[0] || '')) : legacySub, legacySub: isFeaturedWhite ? (keep.legacySub || ((LEGACY_SUBTYPES[legacyType] || [])[0] || '')) : legacySub, collections: isFeaturedWhite ? [] : selectedCollections, effectMain: effectMain,
+    type: legacyType, sub: isFeaturedWhite ? (keep.legacySub || ((LEGACY_SUBTYPES[legacyType] || [])[0] || '')) : legacySub, legacySub: isFeaturedWhite ? (keep.legacySub || ((LEGACY_SUBTYPES[legacyType] || [])[0] || '')) : legacySub, effectMain: effectMain,
     cover34: (isFeaturedWhite || isWhite) ? null : uploadedC34,
     cover11: (isFeaturedWhite || isWhite) ? null : uploadedC11,
     introBg: (isFeaturedWhite || isWhite) ? null : uploadedIntroBg,
