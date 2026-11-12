@@ -309,6 +309,7 @@ table.grid tbody tr.row-error td{background:#fff1f0}
 .tag-group{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
 .series-wrap{overflow-x:auto}
 .series-table{width:100%;border-collapse:collapse;min-width:820px}
+.mix-track-table{min-width:0}
 .series-table th{background:#f5f7fa;font-size:11.5px;color:#5b6675;font-weight:600;text-align:left;padding:7px 8px;border:1px solid #eaeef4;white-space:nowrap}
 .series-table td{padding:6px;border:1px solid #eaeef4;vertical-align:middle}
 .series-table input,.series-table select{height:30px;font-size:12px}
@@ -581,9 +582,9 @@ let SEARCH = [
 
 // 混音配置（封面 + 2–7 条已启用普通白噪音）
 let MIXES = [
-  { id: 'MIX001', cover: art(3), trackIds: [526, 524], updated: '2026-11-10 18:20' },
-  { id: 'MIX002', cover: art(7), trackIds: [525, 518], updated: '2026-11-08 11:05' },
-  { id: 'MIX003', cover: art(1), trackIds: [526, 525, 524], updated: '2026-10-30 09:30' }
+  { id: 'MIX001', cover: art(3), trackIds: [526, 524], effect: '遮蔽杂音', updated: '2026-11-10 18:20' },
+  { id: 'MIX002', cover: art(7), trackIds: [525, 518], effect: '舒缓心绪', updated: '2026-11-08 11:05' },
+  { id: 'MIX003', cover: art(1), trackIds: [526, 525, 524], effect: '提升深睡', updated: '2026-10-30 09:30' }
 ];
 let mixSeed = 4;
 
@@ -1836,12 +1837,13 @@ function mixTrackSummary(mix) {
   return '共 ' + names.length + ' 条 · ' + names.join(' / ');
 }
 function mixRowsHTML() {
-  if (!MIXES.length) return '<tr><td colspan="5"><div class="empty-tip">暂无混音，点击「添加混音」新增</div></td></tr>';
+  if (!MIXES.length) return '<tr><td colspan="6"><div class="empty-tip">暂无混音，点击「添加混音」新增</div></td></tr>';
   return MIXES.map(function (m) {
     return '<tr data-mix-id="' + m.id + '">' +
       '<td class="mono"><b>' + esc(m.id) + '</b></td>' +
       '<td>' + (mediaOf(m.cover) ? thumbHTML(m.cover) : '<span class="tag tag-gray">未配置</span>') + '</td>' +
       '<td>' + esc(mixTrackSummary(m)) + '</td>' +
+      '<td><span class="tag tag-teal">' + esc(m.effect || '—') + '</span></td>' +
       '<td>' + esc(m.updated || '—') + '</td>' +
       '<td><div class="ops"><a data-act="mix-edit" data-id="' + m.id + '">编辑</a><a class="danger" data-act="mix-del" data-id="' + m.id + '">删除</a></div></td></tr>';
   }).join('');
@@ -1849,8 +1851,8 @@ function mixRowsHTML() {
 function mixPageHTML() {
   return '<div class="page"><div class="card"><div class="card-head"><div class="card-title"><span class="bar"></span>混音配置列表 <span class="card-sub">混音 = 封面 + 2–7 条已启用普通白噪音；当前共 ' + MIXES.length + ' 条</span></div>' +
     '<div class="head-actions"><button class="btn sm" data-act="mix-refresh">刷新</button><button class="btn primary" data-act="mix-add">＋ 添加混音</button></div></div>' +
-    '<div class="table-wrap"><table class="grid"><colgroup><col style="width:110px"><col style="width:90px"><col><col style="width:160px"><col style="width:120px"></colgroup>' +
-    '<thead><tr><th>混音ID</th><th>封面</th><th>白噪音音频</th><th>更新时间</th><th>操作</th></tr></thead>' +
+    '<div class="table-wrap"><table class="grid"><colgroup><col style="width:110px"><col style="width:90px"><col><col style="width:120px"><col style="width:160px"><col style="width:120px"></colgroup>' +
+    '<thead><tr><th>混音ID</th><th>封面</th><th>白噪音音频</th><th>功效</th><th>更新时间</th><th>操作</th></tr></thead>' +
     '<tbody id="mixTbody">' + mixRowsHTML() + '</tbody></table></div>' +
     '<div class="card-foot-note">混音仅配置封面与白噪音音频 ID（多选，2–7 条，不可重复）；封面建议 1080×1080，静态≤2MB / GIF≤5MB，不强制比例。</div></div></div>';
 }
@@ -1862,41 +1864,115 @@ function openMixModal(id) {
   const isEdit = id != null;
   const m = isEdit ? MIXES.find(function (x) { return x.id === id; }) : { cover: null, trackIds: [] };
   if (!m) return;
-  const candidates = whiteCandidates();
-  const opts = candidates.map(function (c) {
-    const checked = (m.trackIds || []).indexOf(c.id) >= 0;
-    return '<label class="mix-opt"><input type="checkbox" name="mix-track" value="' + c.id + '"' + (checked ? ' checked' : '') + '><span>' + esc(c.name) + ' <em>' + c.id + '</em></span></label>';
-  }).join('');
-  const ro = false;
+  const initTracks = (m.trackIds || []).map(function (id) {
+    const c = findContent(id);
+    return { id: String(id), name: c ? c.name : '', duration: c ? (c.audioDuration || '') : '' };
+  });
+  while (initTracks.length < 2) initTracks.push({ id: '', name: '', duration: '' });
   openModal({
     title: isEdit ? '编辑混音' : '添加混音',
-    ctx: { type: 'mix', id: id, upload_mixCover: mediaOf(m.cover) },
+    ctx: { type: 'mix', id: id, upload_mixCover: mediaOf(m.cover), mixTracks: initTracks, mixTrackErrors: [] },
     body: '<div class="fgrid" style="padding-top:14px">' +
       '<div class="fitem full" data-field="mixCover"><div class="label"><span class="req">*</span>封面</div><div class="upload-box"><div class="up-preview" id="up-mixCover-preview"></div><div class="up-meta"><div>建议 1080×1080，不强制比例；静态≤2MB / GIF≤5MB</div><div class="up-actions"><button class="btn sm primary" data-act="pick-upload" data-target="mixCover">选择文件</button><button class="btn sm" data-act="clear-upload" data-target="mixCover">清除</button></div><div class="up-name" id="up-mixCover-name"></div></div><input type="file" id="up-mixCover-input" accept="image/jpeg,image/png,image/webp,image/gif" hidden></div><div class="err-msg">请上传混音封面</div></div>' +
-      '<div class="fitem full" data-field="mixTracks"><div class="label"><span class="req">*</span>白噪音 ID（多选，2–7 条）</div><div class="mix-pick">' + (opts || '<span class="muted">暂无可选普通白噪音</span>') + '</div><div class="hint">仅显示已启用普通白噪音；至少 2 条、最多 7 条，不可重复</div><div class="err-msg">请选择 2–7 条白噪音音频</div></div>' +
+      '<div class="fitem full" data-field="mixTracks"><div class="label"><span class="req">*</span>白噪音 ID（2–7 条）</div><div id="mix-track-list"></div><div style="margin-top:10px;display:flex;align-items:center;gap:10px"><button class="btn sm primary" data-act="mix-track-add">＋ 添加一条</button><span class="muted" style="font-size:11.5px" id="mix-track-count">共 2 条</span></div><div class="hint">每行输入已启用普通白噪音 ID，自动带出名称/时长；至少 2 条、最多 7 条，不可重复</div><div class="err-msg">请填写 2–7 条有效白噪音音频</div></div>' +
+      '<div class="fitem full" data-field="mixEffect"><div class="label"><span class="req">*</span>功效</div><div class="radio-row">' + EFFECTS.map(function (x) { return radio('mix-effect', x, m.effect, false); }).join('') + '</div><div class="err-msg">请选择功效</div></div>' +
     '</div>',
     footer: '<button class="btn" data-act="modal-close">取消</button><button class="btn primary" data-act="mix-save">保存</button>',
     onMount: function () {
       renderUploadPreview('mixCover');
       bindUploadInput('mixCover', UPLOAD_LIMIT.mixCover);
+      renderMixTracks();
+      const root = $('#modal');
+      if (root) root.addEventListener('input', function (e) {
+        const t = e.target;
+        if (!t || t.dataset.mixTrack == null) return;
+        const i = parseInt(t.dataset.mixTrack, 10);
+        const tr = (UI.modal.mixTracks || [])[i];
+        if (!tr) return;
+        tr.id = t.value;
+        const c = findContent(t.value);
+        tr.name = c ? c.name : '';
+        tr.duration = c ? (c.audioDuration || '') : '';
+        const n = $('#mix-name-' + i); if (n) n.value = tr.name;
+        const d = $('#mix-dur-' + i); if (d) d.value = tr.duration;
+      });
     }
   });
 }
+function mixTrackRowsHTML() {
+  const tracks = (UI.modal && UI.modal.mixTracks) || [];
+  const errs = (UI.modal && UI.modal.mixTrackErrors) || [];
+  return '<div class="series-wrap"><table class="series-table mix-track-table"><colgroup><col style="width:44px"><col style="width:150px"><col style="width:200px"><col style="width:110px"><col style="width:130px"></colgroup><thead><tr><th class="col-center">序号</th><th>白噪音音频 ID</th><th>音频名称</th><th>音频时长</th><th class="col-center">操作</th></tr></thead><tbody>' +
+    tracks.map(function (t, i) {
+      return '<tr data-mix-track-row="' + i + '" class="' + (errs[i] ? 'row-error' : '') + '">' +
+        '<td class="col-center">' + (i + 1) + '</td>' +
+        '<td><input type="text" data-mix-track="' + i + '" value="' + esc(t.id) + '" placeholder="如 526">' + (errs[i] ? '<span class="rank-err">' + esc(errs[i]) + '</span>' : '') + '</td>' +
+        '<td><input type="text" id="mix-name-' + i + '" value="' + esc(t.name || '') + '" readonly placeholder="自动带出"></td>' +
+        '<td><input type="text" id="mix-dur-' + i + '" value="' + esc(t.duration || '') + '" readonly placeholder="自动带出"></td>' +
+        '<td class="col-center nowrap"><button class="icon-btn" data-act="mix-track-up" data-i="' + i + '">↑</button><button class="icon-btn" data-act="mix-track-down" data-i="' + i + '">↓</button><button class="icon-btn" data-act="mix-track-del" data-i="' + i + '">×</button></td></tr>';
+    }).join('') + '</tbody></table></div>';
+}
+function renderMixTracks() {
+  if (!UI.modal) return;
+  const box = $('#mix-track-list'); if (box) box.innerHTML = mixTrackRowsHTML();
+  const cnt = $('#mix-track-count'); if (cnt) cnt.textContent = '共 ' + ((UI.modal.mixTracks || []).length) + ' 条';
+}
+function addMixTrack() {
+  UI.modal.mixTracks = UI.modal.mixTracks || [];
+  if (UI.modal.mixTracks.length >= 7) { toast('最多 7 条音频', 'error'); return; }
+  UI.modal.mixTracks.push({ id: '', name: '', duration: '' });
+  UI.modal.mixTrackErrors = [];
+  renderMixTracks();
+}
+function delMixTrack(i) { UI.modal.mixTracks.splice(i, 1); UI.modal.mixTrackErrors = []; renderMixTracks(); }
+function moveMixTrack(i, dir) {
+  const tr = UI.modal.mixTracks; const j = i + dir;
+  if (j < 0 || j >= tr.length) return;
+  const t = tr[i]; tr[i] = tr[j]; tr[j] = t;
+  UI.modal.mixTrackErrors = [];
+  renderMixTracks();
+}
 function saveMix() {
   const cover = UI.modal.upload_mixCover;
-  const ids = $$('#modal input[name="mix-track"]:checked').map(function (el) { return Number(el.value); });
-  const valid = whiteCandidates().map(function (c) { return c.id; });
+  const tracks = UI.modal.mixTracks || [];
   const showErr = function (field, msg) {
     const box = $('[data-field="' + field + '"]');
     if (box) { box.classList.add('has-error'); const e = box.querySelector('.err-msg'); if (e) e.textContent = msg; }
     toast(msg, 'error');
   };
-  ['mixCover', 'mixTracks'].forEach(function (f) { const b = $('[data-field="' + f + '"]'); if (b) b.classList.remove('has-error'); });
+  ['mixCover', 'mixTracks', 'mixEffect'].forEach(function (f) { const b = $('[data-field="' + f + '"]'); if (b) b.classList.remove('has-error'); });
   if (!cover || !cover.src) return showErr('mixCover', '请上传混音封面');
-  if (ids.length < 2 || ids.length > 7) return showErr('mixTracks', '请选择 2–7 条白噪音音频');
-  if (ids.some(function (id) { return valid.indexOf(id) < 0; })) return showErr('mixTracks', '仅可选择已启用的普通白噪音');
-  if (new Set(ids).size !== ids.length) return showErr('mixTracks', '白噪音不可重复');
-  const data = { cover: cover, trackIds: ids, updated: NOW };
+  const effect = (($('#modal input[name="mix-effect"]:checked') || {}).value) || '';
+  if (!effect) return showErr('mixEffect', '请选择功效');
+  const errs = tracks.map(function (t) {
+    const id = String(t.id || '').trim();
+    if (!id) return '请输入白噪音 ID';
+    const c = findContent(id);
+    if (!c) return '内容不存在';
+    if (c.status === 'off') return '内容已禁用';
+    if (c.kind !== 'single' || c.legacyType !== '白噪音' || c.topFeatured) return '仅支持已启用普通白噪音单曲';
+    return '';
+  });
+  const seen = {};
+  tracks.forEach(function (t, i) {
+    const id = String(t.id || '').trim();
+    if (errs[i]) return;
+    if (seen[id]) errs[i] = '与第 ' + seen[id] + ' 条重复';
+    else seen[id] = i + 1;
+  });
+  UI.modal.mixTrackErrors = errs;
+  renderMixTracks();
+  let msg = '';
+  if (tracks.length < 2) msg = '至少需要 2 条白噪音音频';
+  else if (tracks.length > 7) msg = '最多 7 条白噪音音频';
+  else if (errs.some(Boolean)) msg = '存在无效或重复音频，请检查标红行';
+  if (msg) {
+    const row = $('.row-error');
+    if (row && row.scrollIntoView) row.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    return showErr('mixTracks', msg);
+  }
+  const ids = tracks.map(function (t) { return Number(String(t.id).trim()); });
+  const data = { cover: cover, trackIds: ids, effect: effect, updated: NOW };
   if (UI.modal.id == null) {
     const nid = 'MIX' + String(mixSeed++).padStart(3, '0');
     MIXES.push(Object.assign({ id: nid }, data));
@@ -1982,6 +2058,10 @@ document.addEventListener('click', function (e) {
     case 'mix-add': openMixModal(null); break;
     case 'mix-edit': openMixModal(id); break;
     case 'mix-save': saveMix(); break;
+    case 'mix-track-add': addMixTrack(); break;
+    case 'mix-track-del': delMixTrack(parseInt(el.dataset.i, 10)); break;
+    case 'mix-track-up': moveMixTrack(parseInt(el.dataset.i, 10), -1); break;
+    case 'mix-track-down': moveMixTrack(parseInt(el.dataset.i, 10), 1); break;
     case 'mix-refresh': refreshMixPage(); toast('列表已刷新', 'info'); break;
     case 'mix-del': confirmDeleteMix(id); break;
     case 'mix-del-confirm': { MIXES = MIXES.filter(function (x) { return x.id !== id; }); closeModal(); refreshMixPage(); toast('混音已删除'); break; }
